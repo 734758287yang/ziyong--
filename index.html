@@ -333,6 +333,7 @@
             var rows = '';
             state.searchResults.forEach(function(p) {
                 rows += '<tr>' +
+                    '<td>' + p.serialNumber + '</td>' +
                     '<td>' + p.productModel + '</td>' +
                     '<td>' + p.productType + '</td>' +
                     '<td>' + p.productSeries + '</td>' +
@@ -341,7 +342,7 @@
                     '</tr>';
             });
             return '<div class="results-table"><table><thead><tr>' +
-                '<th>产品型号</th><th>产品类型</th><th>产品系列</th><th>驱动/软件名称</th><th>操作</th>' +
+                '<th>主机序列号</th><th>产品型号</th><th>产品类型</th><th>产品系列</th><th>驱动/软件名称</th><th>操作</th>' +
                 '</tr></thead><tbody>' + rows + '</tbody></table></div>';
         }
 
