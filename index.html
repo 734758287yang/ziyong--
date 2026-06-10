@@ -359,16 +359,6 @@
         }
 
         function renderProductDetail(product) {
-            var specs = product.specs ? Object.entries(product.specs) : [];
-            var specsHtml = '';
-            if (specs.length > 0) {
-                specsHtml = '<div class="detail-section"><h3 class="detail-section-title">产品规格</h3><div class="detail-info">';
-                specs.forEach(function(s) {
-                    specsHtml += '<div class="detail-row"><span class="detail-label">' + s[0] + '</span><span class="detail-value">' + s[1] + '</span></div>';
-                });
-                specsHtml += '</div></div>';
-            }
-
             // 保修信息
             var warrantyHtml = '';
             if (product.warranty) {
@@ -384,7 +374,7 @@
             }
 
             // 驱动下载
-            var driverHtml = '<div class="detail-section"><div class="tab-header"><span class="tab-item active">驱动下载</span><span class="tab-item">常见问题</span></div>';
+            var driverHtml = '<div class="detail-section"><div class="tab-header"><span class="tab-item active">驱动下载</span></div>';
             driverHtml += '<div class="drivers-table"><table><thead><tr>';
             driverHtml += '<th>驱动名称</th><th>驱动说明</th><th>操作</th>';
             driverHtml += '</tr></thead><tbody><tr>';
@@ -393,10 +383,8 @@
 
             return '<div class="fade-in">' +
                 renderBackButton('返回查询结果', 'home') +
-                '<div class="detail-header">产品名称：' + product.productName + '</div>' +
                 warrantyHtml +
                 driverHtml +
-                specsHtml +
                 '</div>';
         }
 
