@@ -450,7 +450,7 @@
 
         function renderFooter() {
             return `
-                <footer class="bg-gray-800 text-white py-6 mt-12">
+                <footer class="bg-gray-800 text-white py-6 fixed bottom-0 left-0 right-0 z-50">
                     <div class="max-w-6xl mx-auto px-4 text-center">
                         <p class="text-gray-400 text-sm">© 2026 浪潮云洲 版权所有</p>
                     </div>
@@ -460,7 +460,9 @@
 
         function render() {
             const app = document.getElementById('app');
-            app.innerHTML = renderHeader() + renderSearch() + renderResultsSection() + renderFaqCategories() + renderFooter();
+            const mainContent = renderHeader() + renderSearch() + renderResultsSection() + renderFaqCategories();
+            const footer = renderFooter();
+            app.innerHTML = `<div class="pb-16">${mainContent}</div>${footer}`;
 
             const input = document.getElementById('searchInput');
             if (input) {
