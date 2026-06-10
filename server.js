@@ -1,12 +1,7 @@
 import express from 'express';
 import { products, faqs } from './data.js';
-import { fileURLToPath } from 'url';
-import { dirname, join } from 'path';
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
 
 const app = express();
-const PORT = 3000;
 
 // API: Search products by serial number, product model, or part model
 app.get('/api/search', (req, res) => {
@@ -52,7 +47,6 @@ app.get('/api/product/:id', (req, res) => {
     return res.status(404).json({ error: 'Product not found' });
   }
 
-  // Get related FAQs for this product type
   const relatedFaqs = faqs.filter(f => f.productType === product.productType);
   
   res.json({
@@ -61,14 +55,13 @@ app.get('/api/product/:id', (req, res) => {
   });
 });
 
-// Serve static files and frontend
-app.use(express.static(__dirname));
+// Export for Vercel Serverless
+export default app;
 
-app.get('*', (_req, res) => {
-  res.sendFile(join(__dirname, 'index.html'));
-});
-
-app.listen(PORT, '0.0.0.0', () => {
-  console.log(`Server running at http://0.0.0.0:${PORT}`);
-  console.log(`Access from LAN: http://172.20.10.2:${PORT}`);
-});
+// For local development
+if (process.env.NODE_ENV !== 'production') {
+  const PORT = process.env.PORT || 3000;
+  app.listen(PORT, '0.0.0.0', () => {
+    console.log(`Server running at http://0.0.0.0:${PORT}`);
+  });
+}
