@@ -209,18 +209,26 @@
           }
         ];
 
+        const categoryIcons = {
+            '笔记本': `<svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>`,
+            '台式机': `<svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/><rect x="2" y="3" width="20" height="14" rx="2" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>`,
+            '服务器': `<svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01"/></svg>`
+        };
+
         let state = {
             searchKeyword: '',
             searchResults: [],
             hasSearched: false,
             selectedProduct: null,
             relatedFaqs: [],
-            loading: false
+            loading: false,
+            faqView: null
         };
 
         function search(keyword) {
             if (!keyword.trim()) return;
             state.loading = true;
+            state.faqView = null;
             render();
             
             const searchKeyword = keyword.trim().toLowerCase();
@@ -244,6 +252,7 @@
             if (!product) return;
             state.selectedProduct = product;
             state.relatedFaqs = faqs.filter(f => f.productType === product.productType);
+            state.faqView = null;
             render();
         }
 
@@ -286,10 +295,10 @@
             `;
         }
 
-        function renderBackButton() {
+        function renderBackButton(text = '← 返回') {
             return `
-                <button onclick="handleBackToResults()" class="mb-4 text-blue-600 hover:text-blue-700 flex items-center gap-1">
-                    ← 返回查询结果
+                <button onclick="handleBack()" class="mb-4 text-blue-600 hover:text-blue-700 flex items-center gap-1 font-medium">
+                    ${text}
                 </button>
             `;
         }
@@ -298,7 +307,7 @@
             const specs = product.specs ? Object.entries(product.specs) : [];
             return `
                 <div class="fade-in">
-                    ${renderBackButton()}
+                    ${renderBackButton('← 返回查询结果')}
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
                             <img src="${product.image}" alt="${product.productName}" class="w-full rounded-lg object-cover" />
@@ -406,7 +415,8 @@
         }
 
         function renderResultsSection() {
-            if (!state.hasSearched) return '';
+            if (!state.hasSearched && !state.faqView) return '';
+            if (state.faqView) return renderFaqPage();
             const content = state.selectedProduct
                 ? renderProductDetail(state.selectedProduct) + renderRelatedFaqs(state.relatedFaqs)
                 : `<h2 class="text-lg font-bold text-gray-900 mb-4">查询结果</h2>` + renderSearchResults();
@@ -419,11 +429,43 @@
             `;
         }
 
+        function renderFaqPage() {
+            const type = state.faqView;
+            const typeFaqs = faqs.filter(f => f.productType === type);
+            return `
+                <section class="bg-white shadow-sm border-b border-gray-200">
+                    <div class="max-w-6xl mx-auto px-4 py-6">
+                        ${renderBackButton('← 返回首页')}
+                        <h2 class="text-lg font-bold text-gray-900 mb-6">${type} - 常见问题</h2>
+                        ${typeFaqs.length === 0 ? `
+                            <div class="text-center py-12 text-gray-400">
+                                <svg class="w-16 h-16 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                                <p class="text-lg">暂无${type}相关的常见问题</p>
+                                <p class="text-sm mt-2">我们会持续更新，敬请期待</p>
+                            </div>
+                        ` : `
+                            <div class="space-y-4">
+                                ${typeFaqs.map(faq => `
+                                    <div class="p-4 bg-gray-50 rounded-lg">
+                                        <h4 class="font-semibold text-gray-900 mb-2">${faq.title}</h4>
+                                        <p class="text-gray-600 text-sm mb-2">${faq.question}</p>
+                                        <p class="text-gray-700">${faq.answer}</p>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        `}
+                    </div>
+                </section>
+            `;
+        }
+
         function renderFaqCategories() {
             const categories = [
-                { type: '笔记本', icon: '💻', desc: '笔记本电脑相关问题和解决方案' },
-                { type: '台式机', icon: '🖥️', desc: '台式机产品相关问题和解决方案' },
-                { type: '服务器', icon: '', desc: '服务器产品相关问题和解决方案' }
+                { type: '笔记本', desc: '笔记本电脑相关问题和解决方案' },
+                { type: '台式机', desc: '台式机产品相关问题和解决方案' },
+                { type: '服务器', desc: '服务器产品相关问题和解决方案' }
             ];
             return `
                 <section class="max-w-6xl mx-auto px-4 py-8">
@@ -431,11 +473,10 @@
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                         ${categories.map(item => `
                             <div class="group cursor-pointer" onclick="handleFaqCategoryClick('${item.type}')">
-                                <div class="relative overflow-hidden rounded-lg aspect-video bg-gradient-to-br from-gray-800 to-gray-900">
-                                    <div class="absolute inset-0 bg-black/40 group-hover:bg-black/30 transition-colors"></div>
-                                    <div class="absolute inset-0 flex items-center justify-center">
-                                        <div class="text-center text-white">
-                                            <div class="text-4xl mb-2">${item.icon}</div>
+                                <div class="relative overflow-hidden rounded-lg aspect-video bg-gradient-to-br from-gray-800 to-gray-900 group-hover:from-gray-700 group-hover:to-gray-800 transition-colors">
+                                    <div class="absolute inset-0 flex items-center justify-center text-white">
+                                        <div class="text-center">
+                                            <div class="text-white/80 mb-2">${categoryIcons[item.type] || ''}</div>
                                             <span class="text-lg font-semibold">${item.type}</span>
                                         </div>
                                     </div>
@@ -483,15 +524,27 @@
             loadProductDetail(id);
         }
 
-        function handleBackToResults() {
-            state.selectedProduct = null;
-            state.relatedFaqs = [];
+        function handleBack() {
+            if (state.faqView) {
+                state.faqView = null;
+                state.hasSearched = false;
+                state.searchResults = [];
+                state.searchKeyword = '';
+            } else if (state.selectedProduct) {
+                state.selectedProduct = null;
+                state.relatedFaqs = [];
+            }
             render();
         }
 
         function handleFaqCategoryClick(type) {
-            state.searchKeyword = type;
-            search(type);
+            state.faqView = type;
+            state.selectedProduct = null;
+            state.relatedFaqs = [];
+            state.searchKeyword = '';
+            state.searchResults = [];
+            state.hasSearched = true;
+            render();
         }
 
         render();
