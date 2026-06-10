@@ -1,4 +1,4 @@
-export const products = [
+const products = [
   {
     id: 1,
     serialNumber: 'BSH529292',
@@ -109,7 +109,7 @@ export const products = [
   }
 ];
 
-export const faqs = [
+const faqs = [
   {
     id: 1,
     productType: '服务器',
@@ -192,3 +192,5 @@ export const faqs = [
     priority: 'high'
   }
 ];
+
+module.exports = { products, faqs };
