@@ -4,12 +4,5 @@
   "private": true,
   "engines": {
     "node": ">=18"
-  },
-  "scripts": {
-    "dev": "echo 'No dev script needed'",
-    "start": "echo 'No start script needed'"
-  },
-  "dependencies": {
-    "@vercel/node": "^3"
   }
 }
