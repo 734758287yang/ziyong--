@@ -6,7 +6,10 @@
     "node": ">=18"
   },
   "scripts": {
-    "dev": "node server.js",
-    "start": "node server.js"
+    "dev": "echo 'No dev script needed'",
+    "start": "echo 'No start script needed'"
+  },
+  "dependencies": {
+    "@vercel/node": "^3"
   }
 }
