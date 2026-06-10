@@ -1,0 +1,326 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>浪潮云洲 - 产品查询</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+        .fade-in { animation: fadeIn 0.3s ease-in; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    </style>
+</head>
+<body class="min-h-screen bg-gray-50">
+    <div id="app"></div>
+    <script>
+        const API_BASE = '/api';
+
+        const ProductTypeLabels = {
+            '服务器': 'server',
+            '台式机': 'desktop',
+            '笔记本': 'laptop'
+        };
+
+        let state = {
+            searchKeyword: '',
+            searchResults: [],
+            hasSearched: false,
+            selectedProduct: null,
+            relatedFaqs: [],
+            loading: false,
+            faqFaqs: []
+        };
+
+        async function search(keyword) {
+            if (!keyword.trim()) return;
+            state.loading = true;
+            render();
+            try {
+                const res = await fetch(`${API_BASE}/search?keyword=${encodeURIComponent(keyword.trim())}`);
+                const data = await res.json();
+                state.searchResults = data.results;
+                state.hasSearched = true;
+                state.selectedProduct = null;
+                state.relatedFaqs = [];
+            } catch (err) {
+                console.error('Search failed:', err);
+            }
+            state.loading = false;
+            render();
+        }
+
+        async function loadProductDetail(id) {
+            try {
+                const res = await fetch(`${API_BASE}/product/${id}`);
+                const data = await res.json();
+                state.selectedProduct = data;
+                state.relatedFaqs = data.relatedFaqs || [];
+                render();
+            } catch (err) {
+                console.error('Failed to load product detail:', err);
+            }
+        }
+
+        async function loadFaqs() {
+            try {
+                const res = await fetch(`${API_BASE}/faqs`);
+                state.faqFaqs = await res.json();
+                render();
+            } catch (err) {
+                console.error('Failed to load FAQs:', err);
+            }
+        }
+
+        function renderHeader() {
+            return `
+                <header class="bg-white shadow-sm border-b border-gray-200">
+                    <div class="max-w-6xl mx-auto px-4 py-4">
+                        <h1 class="text-2xl font-bold text-blue-600">浪潮云洲</h1>
+                    </div>
+                </header>
+            `;
+        }
+
+        function renderSearch() {
+            return `
+                <section class="bg-white shadow-sm border-b border-gray-200">
+                    <div class="max-w-6xl mx-auto px-4 py-8">
+                        <div class="text-center mb-6">
+                            <p class="text-gray-600">
+                                您可以在下框中通过主机序列号、产品型号、部件型号，获得与产品相关的所有下载信息
+                            </p>
+                        </div>
+                        <div class="flex justify-center gap-2 max-w-xl mx-auto">
+                            <input
+                                type="text"
+                                id="searchInput"
+                                value="${state.searchKeyword}"
+                                placeholder="请输入主机序列号/产品型号/部件型号"
+                                class="flex-1 px-4 py-2 border border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            />
+                            <button
+                                onclick="handleSearch()"
+                                class="px-6 py-2 bg-blue-600 text-white rounded-r-md hover:bg-blue-700 transition-colors"
+                            >
+                                ${state.loading ? '查询中...' : '查询'}
+                            </button>
+                        </div>
+                    </div>
+                </section>
+            `;
+        }
+
+        function renderBackButton() {
+            return `
+                <button onclick="handleBackToResults()" class="mb-4 text-blue-600 hover:text-blue-700 flex items-center gap-1">
+                    ← 返回查询结果
+                </button>
+            `;
+        }
+
+        function renderProductDetail(product) {
+            const specs = product.specs ? Object.entries(product.specs) : [];
+            return `
+                <div class="fade-in">
+                    ${renderBackButton()}
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <img src="${product.image}" alt="${product.productName}" class="w-full rounded-lg object-cover" />
+                        </div>
+                        <div>
+                            <h2 class="text-xl font-bold text-gray-900 mb-4">${product.productName}</h2>
+                            <div class="space-y-3">
+                                <div class="flex justify-between py-2 border-b border-gray-100">
+                                    <span class="text-gray-500">产品型号</span>
+                                    <span class="font-medium">${product.productModel}</span>
+                                </div>
+                                <div class="flex justify-between py-2 border-b border-gray-100">
+                                    <span class="text-gray-500">产品类型</span>
+                                    <span class="font-medium">${product.productType}</span>
+                                </div>
+                                <div class="flex justify-between py-2 border-b border-gray-100">
+                                    <span class="text-gray-500">产品系列</span>
+                                    <span class="font-medium">${product.productSeries}</span>
+                                </div>
+                                <div class="flex justify-between py-2 border-b border-gray-100">
+                                    <span class="text-gray-500">主机序列号</span>
+                                    <span class="font-medium">${product.serialNumber}</span>
+                                </div>
+                                <div class="py-2">
+                                    <span class="text-gray-500">产品描述</span>
+                                    <p class="mt-1 text-gray-700">${product.description}</p>
+                                </div>
+                            </div>
+                            ${specs.length > 0 ? `
+                                <div class="mt-4">
+                                    <h3 class="font-semibold text-gray-900 mb-2">产品规格</h3>
+                                    <div class="space-y-2">
+                                        ${specs.map(([key, value]) => `
+                                            <div class="flex justify-between py-1 border-b border-gray-100">
+                                                <span class="text-gray-500 uppercase text-sm">${key}</span>
+                                                <span class="font-medium">${value}</span>
+                                            </div>
+                                        `).join('')}
+                                    </div>
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderRelatedFaqs(faqs) {
+            if (!faqs || faqs.length === 0) return '';
+            return `
+                <div class="mt-8">
+                    <h3 class="text-lg font-bold text-gray-900 mb-4">该产品的常见问题</h3>
+                    <div class="space-y-4">
+                        ${faqs.map(faq => `
+                            <div class="p-4 bg-gray-50 rounded-lg">
+                                <h4 class="font-semibold text-gray-900 mb-2">${faq.title}</h4>
+                                <p class="text-gray-600 text-sm mb-2">${faq.question}</p>
+                                <p class="text-gray-700">${faq.answer}</p>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderSearchResults() {
+            if (state.searchResults.length === 0) {
+                return `
+                    <div class="text-center py-8 text-gray-500">
+                        <p>未找到匹配的产品信息</p>
+                        <p class="text-sm mt-1">请检查输入内容后重试</p>
+                    </div>
+                `;
+            }
+            return `
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left">
+                        <thead>
+                            <tr class="bg-gray-100">
+                                <th class="px-4 py-3 text-sm font-semibold text-gray-600">产品型号</th>
+                                <th class="px-4 py-3 text-sm font-semibold text-gray-600">产品类型</th>
+                                <th class="px-4 py-3 text-sm font-semibold text-gray-600">产品系列</th>
+                                <th class="px-4 py-3 text-sm font-semibold text-gray-600">驱动/软件名称</th>
+                                <th class="px-4 py-3 text-sm font-semibold text-gray-600">操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${state.searchResults.map(product => `
+                                <tr class="border-b border-gray-100 hover:bg-gray-50">
+                                    <td class="px-4 py-3">${product.productModel}</td>
+                                    <td class="px-4 py-3">${product.productType}</td>
+                                    <td class="px-4 py-3">${product.productSeries}</td>
+                                    <td class="px-4 py-3">${product.partModel}</td>
+                                    <td class="px-4 py-3">
+                                        <button onclick="handleProductClick(${product.id})" class="text-blue-600 hover:text-blue-700">
+                                            详情
+                                        </button>
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        function renderResultsSection() {
+            if (!state.hasSearched) return '';
+            const content = state.selectedProduct
+                ? renderProductDetail(state.selectedProduct) + renderRelatedFaqs(state.relatedFaqs)
+                : `<h2 class="text-lg font-bold text-gray-900 mb-4">查询结果</h2>` + renderSearchResults();
+            return `
+                <section class="bg-white shadow-sm border-b border-gray-200">
+                    <div class="max-w-6xl mx-auto px-4 py-6">
+                        ${content}
+                    </div>
+                </section>
+            `;
+        }
+
+        function renderFaqCategories() {
+            const categories = [
+                { type: '笔记本', icon: '💻', desc: '笔记本电脑相关问题和解决方案' },
+                { type: '台式机', icon: '🖥️', desc: '台式机工作站相关问题和解决方案' },
+                { type: '服务器', icon: '', desc: '服务器产品相关问题和解决方案' }
+            ];
+            return `
+                <section class="max-w-6xl mx-auto px-4 py-8">
+                    <h2 class="text-lg font-bold text-gray-900 mb-6">常见问题</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        ${categories.map(item => `
+                            <div class="group cursor-pointer" onclick="handleFaqCategoryClick('${item.type}')">
+                                <div class="relative overflow-hidden rounded-lg aspect-video bg-gradient-to-br from-gray-800 to-gray-900">
+                                    <div class="absolute inset-0 bg-black/40 group-hover:bg-black/30 transition-colors"></div>
+                                    <div class="absolute inset-0 flex items-center justify-center">
+                                        <div class="text-center text-white">
+                                            <div class="text-4xl mb-2">${item.icon}</div>
+                                            <span class="text-lg font-semibold">${item.type}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <p class="mt-2 text-sm text-gray-500 text-center">${item.desc}</p>
+                            </div>
+                        `).join('')}
+                    </div>
+                </section>
+            `;
+        }
+
+        function renderFooter() {
+            return `
+                <footer class="bg-gray-800 text-white py-6 mt-12">
+                    <div class="max-w-6xl mx-auto px-4 text-center">
+                        <p class="text-gray-400 text-sm">© 2026 浪潮云洲 版权所有</p>
+                    </div>
+                </footer>
+            `;
+        }
+
+        function render() {
+            const app = document.getElementById('app');
+            app.innerHTML = renderHeader() + renderSearch() + renderResultsSection() + renderFaqCategories() + renderFooter();
+
+            // Attach event listeners
+            const input = document.getElementById('searchInput');
+            if (input) {
+                input.value = state.searchKeyword;
+                input.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') handleSearch();
+                });
+            }
+        }
+
+        function handleSearch() {
+            const input = document.getElementById('searchInput');
+            state.searchKeyword = input.value;
+            search(state.searchKeyword);
+        }
+
+        function handleProductClick(id) {
+            loadProductDetail(id);
+        }
+
+        function handleBackToResults() {
+            state.selectedProduct = null;
+            state.relatedFaqs = [];
+            render();
+        }
+
+        function handleFaqCategoryClick(type) {
+            state.searchKeyword = type;
+            search(type);
+        }
+
+        // Initial render
+        render();
+        loadFaqs();
+    </script>
+</body>
+</html>
