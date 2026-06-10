@@ -211,9 +211,11 @@
 
         const categoryIcons = {
             '笔记本': `<svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>`,
-            '台式机': `<svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/><rect x="2" y="3" width="20" height="14" rx="2" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>`,
+            '台式机': `<svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2" stroke-width="1.5"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 21h8M12 17v4"/></svg>`,
             '服务器': `<svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01"/></svg>`
         };
+
+        const categoryMap = { 'server': '服务器', 'desktop': '台式机', 'laptop': '笔记本' };
 
         let state = {
             searchKeyword: '',
@@ -222,13 +224,43 @@
             selectedProduct: null,
             relatedFaqs: [],
             loading: false,
-            faqView: null
+            route: 'home'
         };
+
+        function navigate(route) {
+            window.location.hash = route;
+            handleRouteChange();
+        }
+
+        function handleRouteChange() {
+            const hash = window.location.hash.slice(1) || 'home';
+            const faqMatch = hash.match(/^faq\/(.+)$/);
+            
+            if (faqMatch) {
+                const type = categoryMap[faqMatch[1]];
+                if (type) {
+                    state.route = 'faq';
+                    state.faqType = type;
+                    state.hasSearched = false;
+                    state.selectedProduct = null;
+                } else {
+                    state.route = 'home';
+                }
+            } else if (hash === 'home') {
+                state.route = 'home';
+                state.hasSearched = false;
+                state.selectedProduct = null;
+                state.searchKeyword = '';
+                state.searchResults = [];
+            } else {
+                state.route = 'home';
+            }
+            render();
+        }
 
         function search(keyword) {
             if (!keyword.trim()) return;
             state.loading = true;
-            state.faqView = null;
             render();
             
             const searchKeyword = keyword.trim().toLowerCase();
@@ -252,15 +284,21 @@
             if (!product) return;
             state.selectedProduct = product;
             state.relatedFaqs = faqs.filter(f => f.productType === product.productType);
-            state.faqView = null;
             render();
         }
 
         function renderHeader() {
             return `
                 <header class="bg-white shadow-sm border-b border-gray-200">
-                    <div class="max-w-6xl mx-auto px-4 py-4">
-                        <h1 class="text-2xl font-bold text-blue-600">浪潮云洲</h1>
+                    <div class="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
+                        <h1 class="text-2xl font-bold text-blue-600 cursor-pointer" onclick="navigate('home')">浪潮云洲</h1>
+                        <nav class="flex gap-4 text-sm">
+                            <a href="#home" class="text-gray-500 hover:text-blue-600">首页</a>
+                            <span class="text-gray-300">|</span>
+                            <a href="#faq/laptop" class="text-gray-500 hover:text-blue-600">笔记本</a>
+                            <a href="#faq/desktop" class="text-gray-500 hover:text-blue-600">台式机</a>
+                            <a href="#faq/server" class="text-gray-500 hover:text-blue-600">服务器</a>
+                        </nav>
                     </div>
                 </header>
             `;
@@ -295,9 +333,9 @@
             `;
         }
 
-        function renderBackButton(text = '← 返回') {
+        function renderBackButton(text = '← 返回', target = 'home') {
             return `
-                <button onclick="handleBack()" class="mb-4 text-blue-600 hover:text-blue-700 flex items-center gap-1 font-medium">
+                <button onclick="navigate('${target}')" class="mb-4 text-blue-600 hover:text-blue-700 flex items-center gap-1 font-medium">
                     ${text}
                 </button>
             `;
@@ -307,7 +345,7 @@
             const specs = product.specs ? Object.entries(product.specs) : [];
             return `
                 <div class="fade-in">
-                    ${renderBackButton('← 返回查询结果')}
+                    ${renderBackButton('← 返回查询结果', 'home')}
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
                             <img src="${product.image}" alt="${product.productName}" class="w-full rounded-lg object-cover" />
@@ -415,8 +453,7 @@
         }
 
         function renderResultsSection() {
-            if (!state.hasSearched && !state.faqView) return '';
-            if (state.faqView) return renderFaqPage();
+            if (!state.hasSearched) return '';
             const content = state.selectedProduct
                 ? renderProductDetail(state.selectedProduct) + renderRelatedFaqs(state.relatedFaqs)
                 : `<h2 class="text-lg font-bold text-gray-900 mb-4">查询结果</h2>` + renderSearchResults();
@@ -430,12 +467,12 @@
         }
 
         function renderFaqPage() {
-            const type = state.faqView;
+            const type = state.faqType;
             const typeFaqs = faqs.filter(f => f.productType === type);
             return `
                 <section class="bg-white shadow-sm border-b border-gray-200">
                     <div class="max-w-6xl mx-auto px-4 py-6">
-                        ${renderBackButton('← 返回首页')}
+                        ${renderBackButton('← 返回首页', 'home')}
                         <h2 class="text-lg font-bold text-gray-900 mb-6">${type} - 常见问题</h2>
                         ${typeFaqs.length === 0 ? `
                             <div class="text-center py-12 text-gray-400">
@@ -463,16 +500,16 @@
 
         function renderFaqCategories() {
             const categories = [
-                { type: '笔记本', desc: '笔记本电脑相关问题和解决方案' },
-                { type: '台式机', desc: '台式机产品相关问题和解决方案' },
-                { type: '服务器', desc: '服务器产品相关问题和解决方案' }
+                { type: '笔记本', route: 'faq/laptop', desc: '笔记本电脑相关问题和解决方案' },
+                { type: '台式机', route: 'faq/desktop', desc: '台式机产品相关问题和解决方案' },
+                { type: '服务器', route: 'faq/server', desc: '服务器产品相关问题和解决方案' }
             ];
             return `
                 <section class="max-w-6xl mx-auto px-4 py-8">
                     <h2 class="text-lg font-bold text-gray-900 mb-6">常见问题</h2>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                         ${categories.map(item => `
-                            <div class="group cursor-pointer" onclick="handleFaqCategoryClick('${item.type}')">
+                            <a href="#${item.route}" class="group block">
                                 <div class="relative overflow-hidden rounded-lg aspect-video bg-gradient-to-br from-gray-800 to-gray-900 group-hover:from-gray-700 group-hover:to-gray-800 transition-colors">
                                     <div class="absolute inset-0 flex items-center justify-center text-white">
                                         <div class="text-center">
@@ -482,7 +519,7 @@
                                     </div>
                                 </div>
                                 <p class="mt-2 text-sm text-gray-500 text-center">${item.desc}</p>
-                            </div>
+                            </a>
                         `).join('')}
                     </div>
                 </section>
@@ -501,7 +538,15 @@
 
         function render() {
             const app = document.getElementById('app');
-            const mainContent = renderHeader() + renderSearch() + renderResultsSection() + renderFaqCategories();
+            const isFaqPage = state.route === 'faq';
+            
+            let mainContent;
+            if (isFaqPage) {
+                mainContent = renderHeader() + renderFaqPage();
+            } else {
+                mainContent = renderHeader() + renderSearch() + renderResultsSection() + renderFaqCategories();
+            }
+            
             const footer = renderFooter();
             app.innerHTML = `<div class="pb-16">${mainContent}</div>${footer}`;
 
@@ -524,30 +569,9 @@
             loadProductDetail(id);
         }
 
-        function handleBack() {
-            if (state.faqView) {
-                state.faqView = null;
-                state.hasSearched = false;
-                state.searchResults = [];
-                state.searchKeyword = '';
-            } else if (state.selectedProduct) {
-                state.selectedProduct = null;
-                state.relatedFaqs = [];
-            }
-            render();
-        }
-
-        function handleFaqCategoryClick(type) {
-            state.faqView = type;
-            state.selectedProduct = null;
-            state.relatedFaqs = [];
-            state.searchKeyword = '';
-            state.searchResults = [];
-            state.hasSearched = true;
-            render();
-        }
-
-        render();
+        // Initialize routing
+        window.addEventListener('hashchange', handleRouteChange);
+        handleRouteChange();
     </script>
 </body>
 </html>
