@@ -4,14 +4,106 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>浪潮云洲 - 产品查询</title>
-    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f9fafb; min-height: 100vh; }
         .fade-in { animation: fadeIn 0.3s ease-in; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .container { max-width: 1152px; margin: 0 auto; padding: 0 16px; }
+
+        /* Header */
+        .header { background: #fff; box-shadow: 0 1px 2px rgba(0,0,0,0.05); border-bottom: 1px solid #e5e7eb; }
+        .header-inner { display: flex; align-items: center; justify-content: space-between; padding: 16px; }
+        .logo { font-size: 24px; font-weight: 700; color: #2563eb; cursor: pointer; text-decoration: none; }
+        .nav { display: flex; gap: 16px; font-size: 14px; }
+        .nav a { color: #6b7280; text-decoration: none; }
+        .nav a:hover { color: #2563eb; }
+        .nav-sep { color: #d1d5db; }
+
+        /* Search */
+        .search-section { background: #fff; box-shadow: 0 1px 2px rgba(0,0,0,0.05); border-bottom: 1px solid #e5e7eb; }
+        .search-inner { padding: 32px 16px; text-align: center; }
+        .search-desc { color: #4b5563; margin-bottom: 24px; }
+        .search-bar { display: flex; justify-content: center; gap: 8px; max-width: 640px; margin: 0 auto; }
+        .search-input { flex: 1; padding: 8px 16px; border: 1px solid #d1d5db; border-radius: 6px 0 0 6px; outline: none; font-size: 14px; }
+        .search-input:focus { border-color: #3b82f6; box-shadow: 0 0 0 2px rgba(59,130,246,0.3); }
+        .search-btn { padding: 8px 24px; background: #2563eb; color: #fff; border: none; border-radius: 0 6px 6px 0; cursor: pointer; font-size: 14px; }
+        .search-btn:hover { background: #1d4ed8; }
+
+        /* Results */
+        .results-section { background: #fff; box-shadow: 0 1px 2px rgba(0,0,0,0.05); border-bottom: 1px solid #e5e7eb; }
+        .results-inner { padding: 24px 16px; }
+        .results-title { font-size: 18px; font-weight: 700; color: #111827; margin-bottom: 16px; }
+        .results-table { width: 100%; overflow-x: auto; }
+        .results-table table { width: 100%; border-collapse: collapse; }
+        .results-table th { background: #f3f4f6; padding: 12px 16px; font-size: 14px; font-weight: 600; color: #4b5563; text-align: left; }
+        .results-table td { padding: 12px 16px; border-bottom: 1px solid #f3f4f6; font-size: 14px; }
+        .results-table tr:hover td { background: #f9fafb; }
+        .link-btn { color: #2563eb; background: none; border: none; cursor: pointer; font-size: 14px; }
+        .link-btn:hover { color: #1d4ed8; }
+        .no-results { text-align: center; padding: 32px 0; color: #6b7280; }
+        .no-results small { display: block; margin-top: 4px; font-size: 12px; }
+
+        /* Back button */
+        .back-btn { margin-bottom: 16px; color: #2563eb; background: none; border: none; cursor: pointer; font-size: 14px; font-weight: 500; display: inline-flex; align-items: center; gap: 4px; }
+        .back-btn:hover { color: #1d4ed8; }
+
+        /* Product detail */
+        .detail-grid { display: grid; grid-template-columns: 1fr; gap: 24px; }
+        @media (min-width: 768px) { .detail-grid { grid-template-columns: 1fr 1fr; } }
+        .detail-img { width: 100%; border-radius: 8px; object-fit: cover; }
+        .detail-name { font-size: 20px; font-weight: 700; color: #111827; margin-bottom: 16px; }
+        .detail-info { display: flex; flex-direction: column; gap: 12px; }
+        .detail-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #f3f4f6; font-size: 14px; }
+        .detail-label { color: #6b7280; }
+        .detail-value { font-weight: 500; color: #111827; }
+        .detail-desc { padding: 8px 0; font-size: 14px; }
+        .detail-desc-label { color: #6b7280; display: block; }
+        .detail-desc-text { margin-top: 4px; color: #374151; }
+        .specs-title { font-size: 16px; font-weight: 600; color: #111827; margin-top: 16px; margin-bottom: 8px; }
+        .specs-row { display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid #f3f4f6; font-size: 12px; text-transform: uppercase; }
+        .specs-label { color: #6b7280; }
+        .specs-value { font-weight: 500; color: #111827; }
+
+        /* FAQ cards */
+        .faq-section { padding: 32px 16px; }
+        .faq-title { font-size: 18px; font-weight: 700; color: #111827; margin-bottom: 24px; }
+        .faq-grid { display: grid; grid-template-columns: 1fr; gap: 24px; }
+        @media (min-width: 768px) { .faq-grid { grid-template-columns: repeat(3, 1fr); } }
+        .faq-card-link { text-decoration: none; display: block; }
+        .faq-card { position: relative; overflow: hidden; border-radius: 8px; aspect-ratio: 16 / 9; background: linear-gradient(135deg, #1f2937 0%, #111827 100%); transition: background 0.2s; }
+        .faq-card:hover { background: linear-gradient(135deg, #374151 0%, #1f2937 100%); }
+        .faq-card-inner { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; }
+        .faq-card-content { text-align: center; }
+        .faq-card-icon { color: rgba(255,255,255,0.8); margin-bottom: 8px; display: block; }
+        .faq-card-icon svg { width: 48px; height: 48px; margin: 0 auto; }
+        .faq-card-label { color: #fff; font-size: 18px; font-weight: 600; }
+        .faq-card-desc { margin-top: 8px; font-size: 14px; color: #6b7280; text-align: center; }
+
+        /* FAQ page */
+        .faq-page-section { background: #fff; box-shadow: 0 1px 2px rgba(0,0,0,0.05); border-bottom: 1px solid #e5e7eb; }
+        .faq-page-inner { padding: 24px 16px; }
+        .faq-page-title { font-size: 18px; font-weight: 700; color: #111827; margin-bottom: 24px; }
+        .faq-list { display: flex; flex-direction: column; gap: 16px; }
+        .faq-item { padding: 16px; background: #f9fafb; border-radius: 8px; }
+        .faq-item-title { font-size: 16px; font-weight: 600; color: #111827; margin-bottom: 8px; }
+        .faq-item-question { font-size: 12px; color: #6b7280; margin-bottom: 8px; }
+        .faq-item-answer { font-size: 14px; color: #374151; line-height: 1.6; }
+        .empty-state { text-align: center; padding: 48px 0; color: #9ca3af; }
+        .empty-state svg { width: 64px; height: 64px; margin: 0 auto 16px; }
+        .empty-state p { font-size: 18px; }
+        .empty-state small { display: block; margin-top: 8px; font-size: 14px; }
+
+        /* Footer */
+        .footer { background: #1f2937; color: #fff; padding: 24px 0; position: fixed; bottom: 0; left: 0; right: 0; z-index: 50; }
+        .footer-inner { text-align: center; padding: 0 16px; }
+        .footer-text { color: #9ca3af; font-size: 14px; }
+
+        /* Spacing */
+        .pb-16 { padding-bottom: 64px; }
     </style>
 </head>
-<body class="min-h-screen bg-gray-50">
+<body>
     <div id="app"></div>
     <script>
         const products = [
@@ -26,12 +118,7 @@
             category: 'server',
             description: '高性能企业级服务器，适用于数据中心和云计算场景',
             image: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=professional%20server%20hardware%20product%20photo%20on%20white%20background&image_size=square',
-            specs: {
-              cpu: 'Intel Xeon Platinum 8358',
-              memory: '256GB DDR4',
-              storage: '2TB NVMe SSD',
-              network: '双端口 25GbE'
-            }
+            specs: { cpu: 'Intel Xeon Platinum 8358', memory: '256GB DDR4', storage: '2TB NVMe SSD', network: '双端口 25GbE' }
           },
           {
             id: 2,
@@ -44,12 +131,7 @@
             category: 'desktop',
             description: '高性能专业工作站，适用于设计、渲染等专业应用',
             image: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=professional%20desktop%20workstation%20computer%20on%20white%20background&image_size=square',
-            specs: {
-              cpu: 'Intel Core i9-12900K',
-              memory: '64GB DDR5',
-              storage: '1TB NVMe SSD',
-              network: '千兆以太网'
-            }
+            specs: { cpu: 'Intel Core i9-12900K', memory: '64GB DDR5', storage: '1TB NVMe SSD', network: '千兆以太网' }
           },
           {
             id: 3,
@@ -62,12 +144,7 @@
             category: 'laptop',
             description: '轻薄商务笔记本，便携高效的移动办公体验',
             image: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=modern%20business%20laptop%20computer%20on%20white%20background&image_size=square',
-            specs: {
-              cpu: 'Intel Core i7-1355U',
-              memory: '16GB DDR5',
-              storage: '512GB NVMe SSD',
-              display: '14英寸 2.8K OLED'
-            }
+            specs: { cpu: 'Intel Core i7-1355U', memory: '16GB DDR5', storage: '512GB NVMe SSD', display: '14英寸 2.8K OLED' }
           },
           {
             id: 4,
@@ -80,12 +157,7 @@
             category: 'server',
             description: '旗舰级四路服务器，满足核心业务高性能需求',
             image: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=enterprise%20rack%20server%20hardware%20on%20white%20background&image_size=square',
-            specs: {
-              cpu: '4x Intel Xeon Platinum 8380',
-              memory: '1TB DDR4',
-              storage: '4TB NVMe SSD',
-              network: '四端口 100GbE'
-            }
+            specs: { cpu: '4x Intel Xeon Platinum 8380', memory: '1TB DDR4', storage: '4TB NVMe SSD', network: '四端口 100GbE' }
           },
           {
             id: 5,
@@ -98,12 +170,7 @@
             category: 'desktop',
             description: '专业图形工作站，适用于3D建模和视频后期制作',
             image: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=professional%20graphics%20workstation%20tower%20computer&image_size=square',
-            specs: {
-              cpu: 'Intel Core i9-13900K',
-              memory: '128GB DDR5',
-              storage: '2TB NVMe SSD + 4TB HDD',
-              gpu: 'NVIDIA RTX A6000'
-            }
+            specs: { cpu: 'Intel Core i9-13900K', memory: '128GB DDR5', storage: '2TB NVMe SSD + 4TB HDD', gpu: 'NVIDIA RTX A6000' }
           },
           {
             id: 6,
@@ -116,103 +183,26 @@
             category: 'laptop',
             description: '高性能移动工作站，满足专业用户的移动计算需求',
             image: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=high%20performance%20mobile%20workstation%20laptop&image_size=square',
-            specs: {
-              cpu: 'Intel Core i9-13900H',
-              memory: '32GB DDR5',
-              storage: '1TB NVMe SSD',
-              display: '16英寸 4K mini-LED'
-            }
+            specs: { cpu: 'Intel Core i9-13900H', memory: '32GB DDR5', storage: '1TB NVMe SSD', display: '16英寸 4K mini-LED' }
           }
         ];
 
         const faqs = [
-          {
-            id: 1,
-            productType: '服务器',
-            category: 'server',
-            title: '服务器无法开机怎么办？',
-            question: '服务器按下电源键后没有任何反应，无法开机',
-            answer: '请按以下步骤排查：1. 检查电源线连接是否牢固；2. 确认电源开关已打开；3. 检查电源模块指示灯状态；4. 尝试更换电源线；5. 如仍无法解决，请联系技术支持。',
-            priority: 'high'
-          },
-          {
-            id: 2,
-            productType: '服务器',
-            category: 'server',
-            title: '如何查看服务器硬件状态？',
-            question: '需要了解服务器当前的硬件运行状态',
-            answer: '可通过以下方式查看：1. 登录BMC管理界面查看硬件状态；2. 使用浪潮管理软件Inspur BMC；3. 检查前面板指示灯状态；4. 查看系统日志和硬件告警信息。',
-            priority: 'medium'
-          },
-          {
-            id: 3,
-            productType: '服务器',
-            category: 'server',
-            title: '服务器内存如何扩容？',
-            question: '需要增加服务器内存容量以提升性能',
-            answer: '扩容步骤：1. 确认支持的内存类型和最大容量；2. 购买匹配的内存条；3. 关机断电后打开机箱；4. 按照内存插槽顺序插入新内存；5. 开机进入BIOS确认识别。建议由专业人员进行操作。',
-            priority: 'medium'
-          },
-          {
-            id: 4,
-            productType: '台式机',
-            category: 'desktop',
-            title: '台式机无法进入系统怎么办？',
-            question: '电脑开机后卡在启动画面或黑屏',
-            answer: '请尝试：1. 检查显示器连接线是否正常；2. 尝试进入安全模式；3. 检查硬盘是否被识别；4. 如有系统恢复分区，可尝试恢复；5. 检查是否有最近的硬件变更。',
-            priority: 'high'
-          },
-          {
-            id: 5,
-            productType: '台式机',
-            category: 'desktop',
-            title: '如何升级显卡驱动？',
-            question: '需要更新显卡驱动以获得更好的性能',
-            answer: '升级方法：1. 访问显卡厂商官网下载最新驱动；2. 或访问浪潮驱动下载中心；3. 运行驱动安装程序；4. 重启电脑使驱动生效。建议使用官方提供的稳定版本驱动。',
-            priority: 'low'
-          },
-          {
-            id: 6,
-            productType: '台式机',
-            category: 'desktop',
-            title: '台式机运行缓慢如何优化？',
-            question: '电脑使用过程中感觉响应变慢',
-            answer: '优化建议：1. 清理磁盘空间和临时文件；2. 检查是否有后台程序占用资源；3. 增加内存或升级到SSD；4. 定期进行磁盘碎片整理；5. 检查是否有病毒或恶意软件。',
-            priority: 'medium'
-          },
-          {
-            id: 7,
-            productType: '笔记本',
-            category: 'laptop',
-            title: '笔记本电池续航时间短怎么办？',
-            question: '笔记本电脑电池使用时间明显缩短',
-            answer: '解决方法：1. 调整电源管理设置为节能模式；2. 降低屏幕亮度；3. 关闭不必要的后台程序；4. 检查电池健康状况；5. 如电池老化严重，建议更换新电池。',
-            priority: 'medium'
-          },
-          {
-            id: 8,
-            productType: '笔记本',
-            category: 'laptop',
-            title: '笔记本WiFi连接不稳定怎么办？',
-            question: '无线网络经常断连或信号弱',
-            answer: '排查方法：1. 检查路由器是否正常工作；2. 尝试更新无线网卡驱动；3. 调整笔记本位置改善信号；4. 重置网络适配器；5. 检查是否有电磁干扰源。如问题持续，可能需要更换网卡。',
-            priority: 'medium'
-          },
-          {
-            id: 9,
-            productType: '笔记本',
-            category: 'laptop',
-            title: '笔记本触摸板失灵如何解决？',
-            question: '笔记本触摸板无法正常使用',
-            answer: '解决步骤：1. 检查是否误触关闭快捷键（如Fn+F9）；2. 更新触摸板驱动程序；3. 在设备管理器中重新启用设备；4. 检查是否有液体进入；5. 如硬件故障，请联系售后维修。',
-            priority: 'high'
-          }
+          { id: 1, productType: '服务器', category: 'server', title: '服务器无法开机怎么办？', question: '服务器按下电源键后没有任何反应，无法开机', answer: '请按以下步骤排查：1. 检查电源线连接是否牢固；2. 确认电源开关已打开；3. 检查电源模块指示灯状态；4. 尝试更换电源线；5. 如仍无法解决，请联系技术支持。', priority: 'high' },
+          { id: 2, productType: '服务器', category: 'server', title: '如何查看服务器硬件状态？', question: '需要了解服务器当前的硬件运行状态', answer: '可通过以下方式查看：1. 登录BMC管理界面查看硬件状态；2. 使用浪潮管理软件Inspur BMC；3. 检查前面板指示灯状态；4. 查看系统日志和硬件告警信息。', priority: 'medium' },
+          { id: 3, productType: '服务器', category: 'server', title: '服务器内存如何扩容？', question: '需要增加服务器内存容量以提升性能', answer: '扩容步骤：1. 确认支持的内存类型和最大容量；2. 购买匹配的内存条；3. 关机断电后打开机箱；4. 按照内存插槽顺序插入新内存；5. 开机进入BIOS确认识别。建议由专业人员进行操作。', priority: 'medium' },
+          { id: 4, productType: '台式机', category: 'desktop', title: '台式机无法进入系统怎么办？', question: '电脑开机后卡在启动画面或黑屏', answer: '请尝试：1. 检查显示器连接线是否正常；2. 尝试进入安全模式；3. 检查硬盘是否被识别；4. 如有系统恢复分区，可尝试恢复；5. 检查是否有最近的硬件变更。', priority: 'high' },
+          { id: 5, productType: '台式机', category: 'desktop', title: '如何升级显卡驱动？', question: '需要更新显卡驱动以获得更好的性能', answer: '升级方法：1. 访问显卡厂商官网下载最新驱动；2. 或访问浪潮驱动下载中心；3. 运行驱动安装程序；4. 重启电脑使驱动生效。建议使用官方提供的稳定版本驱动。', priority: 'low' },
+          { id: 6, productType: '台式机', category: 'desktop', title: '台式机运行缓慢如何优化？', question: '电脑使用过程中感觉响应变慢', answer: '优化建议：1. 清理磁盘空间和临时文件；2. 检查是否有后台程序占用资源；3. 增加内存或升级到SSD；4. 定期进行磁盘碎片整理；5. 检查是否有病毒或恶意软件。', priority: 'medium' },
+          { id: 7, productType: '笔记本', category: 'laptop', title: '笔记本电池续航时间短怎么办？', question: '笔记本电脑电池使用时间明显缩短', answer: '解决方法：1. 调整电源管理设置为节能模式；2. 降低屏幕亮度；3. 关闭不必要的后台程序；4. 检查电池健康状况；5. 如电池老化严重，建议更换新电池。', priority: 'medium' },
+          { id: 8, productType: '笔记本', category: 'laptop', title: '笔记本WiFi连接不稳定怎么办？', question: '无线网络经常断连或信号弱', answer: '排查方法：1. 检查路由器是否正常工作；2. 尝试更新无线网卡驱动；3. 调整笔记本位置改善信号；4. 重置网络适配器；5. 检查是否有电磁干扰源。如问题持续，可能需要更换网卡。', priority: 'medium' },
+          { id: 9, productType: '笔记本', category: 'laptop', title: '笔记本触摸板失灵如何解决？', question: '笔记本触摸板无法正常使用', answer: '解决步骤：1. 检查是否误触关闭快捷键（如Fn+F9）；2. 更新触摸板驱动程序；3. 在设备管理器中重新启用设备；4. 检查是否有液体进入；5. 如硬件故障，请联系售后维修。', priority: 'high' }
         ];
 
         const categoryIcons = {
-            '笔记本': `<svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="4" y="6" width="16" height="10" stroke-width="1.5"/><path d="M4 18h16" stroke-width="1.5" stroke-linecap="round"/></svg>`,
-            '台式机': `<svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2" stroke-width="1.5"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 21h8M12 17v4"/></svg>`,
-            '服务器': `<svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01"/></svg>`
+            '笔记本': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="4" y="6" width="16" height="10"/><path d="M4 18h16" stroke-linecap="round"/></svg>',
+            '台式机': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+            '服务器': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01" stroke-linecap="round" stroke-linejoin="round"/></svg>'
         };
 
         const categoryMap = { 'server': '服务器', 'desktop': '台式机', 'laptop': '笔记本' };
@@ -224,7 +214,8 @@
             selectedProduct: null,
             relatedFaqs: [],
             loading: false,
-            route: 'home'
+            route: 'home',
+            faqType: ''
         };
 
         function navigate(route) {
@@ -235,7 +226,6 @@
         function handleRouteChange() {
             const hash = window.location.hash.slice(1) || 'home';
             const faqMatch = hash.match(/^faq\/(.+)$/);
-            
             if (faqMatch) {
                 const type = categoryMap[faqMatch[1]];
                 if (type) {
@@ -262,16 +252,14 @@
             if (!keyword.trim()) return;
             state.loading = true;
             render();
-            
             const searchKeyword = keyword.trim().toLowerCase();
-            state.searchResults = products.filter(product => 
-                product.serialNumber?.toLowerCase().includes(searchKeyword) ||
-                product.productModel?.toLowerCase().includes(searchKeyword) ||
-                product.partModel?.toLowerCase().includes(searchKeyword) ||
-                product.productType?.toLowerCase().includes(searchKeyword) ||
-                product.productSeries?.toLowerCase().includes(searchKeyword)
+            state.searchResults = products.filter(p =>
+                p.serialNumber?.toLowerCase().includes(searchKeyword) ||
+                p.productModel?.toLowerCase().includes(searchKeyword) ||
+                p.partModel?.toLowerCase().includes(searchKeyword) ||
+                p.productType?.toLowerCase().includes(searchKeyword) ||
+                p.productSeries?.toLowerCase().includes(searchKeyword)
             );
-            
             state.hasSearched = true;
             state.selectedProduct = null;
             state.relatedFaqs = [];
@@ -288,260 +276,146 @@
         }
 
         function renderHeader() {
-            return `
-                <header class="bg-white shadow-sm border-b border-gray-200">
-                    <div class="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
-                        <h1 class="text-2xl font-bold text-blue-600 cursor-pointer" onclick="navigate('home')">浪潮云洲</h1>
-                        <nav class="flex gap-4 text-sm">
-                            <a href="#home" class="text-gray-500 hover:text-blue-600">首页</a>
-                            <span class="text-gray-300">|</span>
-                            <a href="#faq/laptop" class="text-gray-500 hover:text-blue-600">笔记本</a>
-                            <a href="#faq/desktop" class="text-gray-500 hover:text-blue-600">台式机</a>
-                            <a href="#faq/server" class="text-gray-500 hover:text-blue-600">服务器</a>
-                        </nav>
-                    </div>
-                </header>
-            `;
+            return '<header class="header"><div class="container"><div class="header-inner">' +
+                '<a class="logo" onclick="navigate(\'home\')">浪潮云洲</a>' +
+                '<nav class="nav">' +
+                '<a href="#home">首页</a><span class="nav-sep">|</span>' +
+                '<a href="#faq/laptop">笔记本</a>' +
+                '<a href="#faq/desktop">台式机</a>' +
+                '<a href="#faq/server">服务器</a>' +
+                '</nav></div></div></header>';
         }
 
         function renderSearch() {
-            return `
-                <section class="bg-white shadow-sm border-b border-gray-200">
-                    <div class="max-w-6xl mx-auto px-4 py-8">
-                        <div class="text-center mb-6">
-                            <p class="text-gray-600">
-                                您可以在下框中通过主机序列号、产品型号、部件型号，获得与产品相关的所有下载信息
-                            </p>
-                        </div>
-                        <div class="flex justify-center gap-2 max-w-xl mx-auto">
-                            <input
-                                type="text"
-                                id="searchInput"
-                                value="${state.searchKeyword}"
-                                placeholder="请输入主机序列号/产品型号/部件型号"
-                                class="flex-1 px-4 py-2 border border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                            />
-                            <button
-                                onclick="handleSearch()"
-                                class="px-6 py-2 bg-blue-600 text-white rounded-r-md hover:bg-blue-700 transition-colors"
-                            >
-                                ${state.loading ? '查询中...' : '查询'}
-                            </button>
-                        </div>
-                    </div>
-                </section>
-            `;
+            return '<section class="search-section"><div class="container"><div class="search-inner">' +
+                '<p class="search-desc">您可以在下框中通过主机序列号、产品型号、部件型号，获得与产品相关的所有下载信息</p>' +
+                '<div class="search-bar">' +
+                '<input type="text" id="searchInput" value="' + state.searchKeyword.replace(/"/g, '&quot;') + '" placeholder="请输入主机序列号/产品型号/部件型号" class="search-input" />' +
+                '<button onclick="handleSearch()" class="search-btn">' + (state.loading ? '查询中...' : '查询') + '</button>' +
+                '</div></div></section>';
         }
 
-        function renderBackButton(text = '← 返回', target = 'home') {
-            return `
-                <button onclick="navigate('${target}')" class="mb-4 text-blue-600 hover:text-blue-700 flex items-center gap-1 font-medium">
-                    ${text}
-                </button>
-            `;
+        function renderBackButton(text, target) {
+            return '<button class="back-btn" onclick="navigate(\'' + target + '\')">← ' + text + '</button>';
         }
 
         function renderProductDetail(product) {
-            const specs = product.specs ? Object.entries(product.specs) : [];
-            return `
-                <div class="fade-in">
-                    ${renderBackButton('← 返回查询结果', 'home')}
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <img src="${product.image}" alt="${product.productName}" class="w-full rounded-lg object-cover" />
-                        </div>
-                        <div>
-                            <h2 class="text-xl font-bold text-gray-900 mb-4">${product.productName}</h2>
-                            <div class="space-y-3">
-                                <div class="flex justify-between py-2 border-b border-gray-100">
-                                    <span class="text-gray-500">产品型号</span>
-                                    <span class="font-medium">${product.productModel}</span>
-                                </div>
-                                <div class="flex justify-between py-2 border-b border-gray-100">
-                                    <span class="text-gray-500">产品类型</span>
-                                    <span class="font-medium">${product.productType}</span>
-                                </div>
-                                <div class="flex justify-between py-2 border-b border-gray-100">
-                                    <span class="text-gray-500">产品系列</span>
-                                    <span class="font-medium">${product.productSeries}</span>
-                                </div>
-                                <div class="flex justify-between py-2 border-b border-gray-100">
-                                    <span class="text-gray-500">主机序列号</span>
-                                    <span class="font-medium">${product.serialNumber}</span>
-                                </div>
-                                <div class="py-2">
-                                    <span class="text-gray-500">产品描述</span>
-                                    <p class="mt-1 text-gray-700">${product.description}</p>
-                                </div>
-                            </div>
-                            ${specs.length > 0 ? `
-                                <div class="mt-4">
-                                    <h3 class="font-semibold text-gray-900 mb-2">产品规格</h3>
-                                    <div class="space-y-2">
-                                        ${specs.map(([key, value]) => `
-                                            <div class="flex justify-between py-1 border-b border-gray-100">
-                                                <span class="text-gray-500 uppercase text-sm">${key}</span>
-                                                <span class="font-medium">${value}</span>
-                                            </div>
-                                        `).join('')}
-                                    </div>
-                                </div>
-                            ` : ''}
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
-
-        function renderRelatedFaqs(faqsList) {
-            if (!faqsList || faqsList.length === 0) return '';
-            return `
-                <div class="mt-8">
-                    <h3 class="text-lg font-bold text-gray-900 mb-4">该产品的常见问题</h3>
-                    <div class="space-y-4">
-                        ${faqsList.map(faq => `
-                            <div class="p-4 bg-gray-50 rounded-lg">
-                                <h4 class="font-semibold text-gray-900 mb-2">${faq.title}</h4>
-                                <p class="text-gray-600 text-sm mb-2">${faq.question}</p>
-                                <p class="text-gray-700">${faq.answer}</p>
-                            </div>
-                        `).join('')}
-                    </div>
-                </div>
-            `;
+            var specs = product.specs ? Object.entries(product.specs) : [];
+            var specsHtml = '';
+            if (specs.length > 0) {
+                specsHtml = '<h3 class="specs-title">产品规格</h3><div>';
+                specs.forEach(function(s) {
+                    specsHtml += '<div class="specs-row"><span class="specs-label">' + s[0] + '</span><span class="specs-value">' + s[1] + '</span></div>';
+                });
+                specsHtml += '</div>';
+            }
+            return '<div class="fade-in">' +
+                renderBackButton('返回查询结果', 'home') +
+                '<div class="detail-grid">' +
+                '<div><img src="' + product.image + '" alt="' + product.productName + '" class="detail-img" /></div>' +
+                '<div>' +
+                '<h2 class="detail-name">' + product.productName + '</h2>' +
+                '<div class="detail-info">' +
+                '<div class="detail-row"><span class="detail-label">产品型号</span><span class="detail-value">' + product.productModel + '</span></div>' +
+                '<div class="detail-row"><span class="detail-label">产品类型</span><span class="detail-value">' + product.productType + '</span></div>' +
+                '<div class="detail-row"><span class="detail-label">产品系列</span><span class="detail-value">' + product.productSeries + '</span></div>' +
+                '<div class="detail-row"><span class="detail-label">主机序列号</span><span class="detail-value">' + product.serialNumber + '</span></div>' +
+                '<div class="detail-desc"><span class="detail-desc-label">产品描述</span><p class="detail-desc-text">' + product.description + '</p></div>' +
+                '</div>' +
+                specsHtml +
+                '</div></div></div>';
         }
 
         function renderSearchResults() {
             if (state.searchResults.length === 0) {
-                return `
-                    <div class="text-center py-8 text-gray-500">
-                        <p>未找到匹配的产品信息</p>
-                        <p class="text-sm mt-1">请检查输入内容后重试</p>
-                    </div>
-                `;
+                return '<div class="no-results"><p>未找到匹配的产品信息</p><small>请检查输入内容后重试</small></div>';
             }
-            return `
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left">
-                        <thead>
-                            <tr class="bg-gray-100">
-                                <th class="px-4 py-3 text-sm font-semibold text-gray-600">产品型号</th>
-                                <th class="px-4 py-3 text-sm font-semibold text-gray-600">产品类型</th>
-                                <th class="px-4 py-3 text-sm font-semibold text-gray-600">产品系列</th>
-                                <th class="px-4 py-3 text-sm font-semibold text-gray-600">驱动/软件名称</th>
-                                <th class="px-4 py-3 text-sm font-semibold text-gray-600">操作</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${state.searchResults.map(product => `
-                                <tr class="border-b border-gray-100 hover:bg-gray-50">
-                                    <td class="px-4 py-3">${product.productModel}</td>
-                                    <td class="px-4 py-3">${product.productType}</td>
-                                    <td class="px-4 py-3">${product.productSeries}</td>
-                                    <td class="px-4 py-3">${product.partModel}</td>
-                                    <td class="px-4 py-3">
-                                        <button onclick="handleProductClick(${product.id})" class="text-blue-600 hover:text-blue-700">
-                                            详情
-                                        </button>
-                                    </td>
-                                </tr>
-                            `).join('')}
-                        </tbody>
-                    </table>
-                </div>
-            `;
+            var rows = '';
+            state.searchResults.forEach(function(p) {
+                rows += '<tr>' +
+                    '<td>' + p.productModel + '</td>' +
+                    '<td>' + p.productType + '</td>' +
+                    '<td>' + p.productSeries + '</td>' +
+                    '<td>' + p.partModel + '</td>' +
+                    '<td><button class="link-btn" onclick="handleProductClick(' + p.id + ')">详情</button></td>' +
+                    '</tr>';
+            });
+            return '<div class="results-table"><table><thead><tr>' +
+                '<th>产品型号</th><th>产品类型</th><th>产品系列</th><th>驱动/软件名称</th><th>操作</th>' +
+                '</tr></thead><tbody>' + rows + '</tbody></table></div>';
         }
 
         function renderResultsSection() {
             if (!state.hasSearched) return '';
-            const content = state.selectedProduct
-                ? renderProductDetail(state.selectedProduct)
-                : `<h2 class="text-lg font-bold text-gray-900 mb-4">查询结果</h2>` + renderSearchResults();
-            return `
-                <section class="bg-white shadow-sm border-b border-gray-200">
-                    <div class="max-w-6xl mx-auto px-4 py-6">
-                        ${content}
-                    </div>
-                </section>
-            `;
+            var content;
+            if (state.selectedProduct) {
+                content = renderProductDetail(state.selectedProduct);
+            } else {
+                content = '<h2 class="results-title">查询结果</h2>' + renderSearchResults();
+            }
+            return '<section class="results-section"><div class="container"><div class="results-inner">' + content + '</div></div></section>';
         }
 
         function renderFaqPage() {
-            const type = state.faqType;
-            const typeFaqs = faqs.filter(f => f.productType === type);
-            return `
-                <section class="bg-white shadow-sm border-b border-gray-200">
-                    <div class="max-w-6xl mx-auto px-4 py-6">
-                        ${renderBackButton('← 返回首页', 'home')}
-                        <h2 class="text-lg font-bold text-gray-900 mb-6">${type} - 常见问题</h2>
-                        ${typeFaqs.length === 0 ? `
-                            <div class="text-center py-12 text-gray-400">
-                                <svg class="w-16 h-16 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                </svg>
-                                <p class="text-lg">暂无${type}相关的常见问题</p>
-                                <p class="text-sm mt-2">我们会持续更新，敬请期待</p>
-                            </div>
-                        ` : `
-                            <div class="space-y-4">
-                                ${typeFaqs.map(faq => `
-                                    <div class="p-4 bg-gray-50 rounded-lg">
-                                        <h4 class="font-semibold text-gray-900 mb-2">${faq.title}</h4>
-                                        <p class="text-gray-600 text-sm mb-2">${faq.question}</p>
-                                        <p class="text-gray-700">${faq.answer}</p>
-                                    </div>
-                                `).join('')}
-                            </div>
-                        `}
-                    </div>
-                </section>
-            `;
+            var type = state.faqType;
+            var typeFaqs = faqs.filter(function(f) { return f.productType === type; });
+            var bodyHtml;
+            if (typeFaqs.length === 0) {
+                bodyHtml = '<div class="empty-state">' +
+                    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round"/></svg>' +
+                    '<p>暂无' + type + '相关的常见问题</p>' +
+                    '<small>我们会持续更新，敬请期待</small></div>';
+            } else {
+                bodyHtml = '<div class="faq-list">';
+                typeFaqs.forEach(function(faq) {
+                    bodyHtml += '<div class="faq-item">' +
+                        '<h4 class="faq-item-title">' + faq.title + '</h4>' +
+                        '<p class="faq-item-question">' + faq.question + '</p>' +
+                        '<p class="faq-item-answer">' + faq.answer + '</p>' +
+                        '</div>';
+                });
+                bodyHtml += '</div>';
+            }
+            return '<section class="faq-page-section"><div class="container"><div class="faq-page-inner">' +
+                renderBackButton('返回首页', 'home') +
+                '<h2 class="faq-page-title">' + type + ' - 常见问题</h2>' +
+                bodyHtml +
+                '</div></div></section>';
         }
 
         function renderFaqCategories() {
-            const categories = [
+            var categories = [
                 { type: '笔记本', route: 'faq/laptop', desc: '笔记本电脑相关问题和解决方案' },
                 { type: '台式机', route: 'faq/desktop', desc: '台式机产品相关问题和解决方案' },
                 { type: '服务器', route: 'faq/server', desc: '服务器产品相关问题和解决方案' }
             ];
-            return `
-                <section class="max-w-6xl mx-auto px-4 py-8">
-                    <h2 class="text-lg font-bold text-gray-900 mb-6">常见问题</h2>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        ${categories.map(item => `
-                            <a href="#${item.route}" class="group block">
-                                <div class="relative overflow-hidden rounded-lg aspect-video bg-gradient-to-br from-gray-800 to-gray-900 group-hover:from-gray-700 group-hover:to-gray-800 transition-colors">
-                                    <div class="absolute inset-0 flex items-center justify-center text-white">
-                                        <div class="text-center">
-                                            <div class="text-white/80 mb-2">${categoryIcons[item.type] || ''}</div>
-                                            <span class="text-lg font-semibold">${item.type}</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <p class="mt-2 text-sm text-gray-500 text-center">${item.desc}</p>
-                            </a>
-                        `).join('')}
-                    </div>
-                </section>
-            `;
+            var cards = '';
+            categories.forEach(function(item) {
+                cards += '<a href="#' + item.route + '" class="faq-card-link">' +
+                    '<div class="faq-card"><div class="faq-card-inner">' +
+                    '<div class="faq-card-content">' +
+                    '<div class="faq-card-icon">' + (categoryIcons[item.type] || '') + '</div>' +
+                    '<span class="faq-card-label">' + item.type + '</span>' +
+                    '</div></div></div>' +
+                    '<p class="faq-card-desc">' + item.desc + '</p></a>';
+            });
+            return '<section class="faq-section"><div class="container">' +
+                '<h2 class="faq-title">常见问题</h2>' +
+                '<div class="faq-grid">' + cards + '</div>' +
+                '</div></section>';
         }
 
         function renderFooter() {
-            return `
-                <footer class="bg-gray-800 text-white py-6 fixed bottom-0 left-0 right-0 z-50">
-                    <div class="max-w-6xl mx-auto px-4 text-center">
-                        <p class="text-gray-400 text-sm">© 2026 浪潮云洲 版权所有</p>
-                    </div>
-                </footer>
-            `;
+            return '<footer class="footer"><div class="footer-inner">' +
+                '<p class="footer-text">&copy; 2026 浪潮云洲 版权所有</p>' +
+                '</div></footer>';
         }
 
         function render() {
-            const app = document.getElementById('app');
-            const isFaqPage = state.route === 'faq';
-            const isDetailPage = !!state.selectedProduct;
-            
-            let mainContent;
+            var app = document.getElementById('app');
+            var isFaqPage = state.route === 'faq';
+            var isDetailPage = !!state.selectedProduct;
+            var mainContent;
             if (isFaqPage) {
                 mainContent = renderHeader() + renderFaqPage();
             } else if (isDetailPage) {
@@ -549,21 +423,18 @@
             } else {
                 mainContent = renderHeader() + renderSearch() + renderResultsSection() + renderFaqCategories();
             }
-            
-            const footer = renderFooter();
-            app.innerHTML = `<div class="pb-16">${mainContent}</div>${footer}`;
-
-            const input = document.getElementById('searchInput');
+            app.innerHTML = '<div class="pb-16">' + mainContent + '</div>' + renderFooter();
+            var input = document.getElementById('searchInput');
             if (input) {
                 input.value = state.searchKeyword;
-                input.addEventListener('keypress', (e) => {
+                input.addEventListener('keypress', function(e) {
                     if (e.key === 'Enter') handleSearch();
                 });
             }
         }
 
         function handleSearch() {
-            const input = document.getElementById('searchInput');
+            var input = document.getElementById('searchInput');
             state.searchKeyword = input.value;
             search(state.searchKeyword);
         }
@@ -572,7 +443,6 @@
             loadProductDetail(id);
         }
 
-        // Initialize routing
         window.addEventListener('hashchange', handleRouteChange);
         handleRouteChange();
     </script>
