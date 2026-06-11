@@ -313,11 +313,7 @@
             render();
             const searchKeyword = keyword.trim().toLowerCase();
             state.searchResults = products.filter(p =>
-                p.serialNumber?.toLowerCase().includes(searchKeyword) ||
-                p.productModel?.toLowerCase().includes(searchKeyword) ||
-                p.partModel?.toLowerCase().includes(searchKeyword) ||
-                p.productType?.toLowerCase().includes(searchKeyword) ||
-                p.productSeries?.toLowerCase().includes(searchKeyword)
+                p.serialNumber?.toLowerCase().includes(searchKeyword)
             );
             state.hasSearched = true;
             state.selectedProduct = null;
@@ -347,9 +343,9 @@
 
         function renderSearch() {
             return '<section class="search-section"><div class="container"><div class="search-inner">' +
-                '<p class="search-desc">您可以在下框中通过主机序列号、产品型号、部件型号，获得与产品相关的所有下载信息</p>' +
+                '<p class="search-desc">您可以在下框中通过主机序列号，获得与产品相关的所有下载信息</p>' +
                 '<div class="search-bar">' +
-                '<input type="text" id="searchInput" value="' + state.searchKeyword.replace(/"/g, '&quot;') + '" placeholder="请输入主机序列号/产品型号/部件型号" class="search-input" />' +
+                '<input type="text" id="searchInput" value="' + state.searchKeyword.replace(/"/g, '&quot;') + '" placeholder="请输入主机序列号" class="search-input" />' +
                 '<button onclick="handleSearch()" class="search-btn">' + (state.loading ? '查询中...' : '查询') + '</button>' +
                 '</div></div></section>';
         }
