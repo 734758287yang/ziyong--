@@ -6,8 +6,9 @@
     <title>浪潮云洲 - 产品查询</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f9fafb; min-height: 100vh; display: flex; flex-direction: column; }
-        #app { flex: 1; }
+        body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f9fafb; }
+        .page-wrapper { min-height: 100vh; display: flex; flex-direction: column; }
+        .page-content { flex: 1; }
         .fade-in { animation: fadeIn 0.3s ease-in; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         .container { max-width: 1152px; margin: 0 auto; padding: 0 16px; }
@@ -137,7 +138,7 @@
         .modal-download-btn:hover { background: #1d4ed8; }
 
         /* Footer */
-        .footer { background: #1f2937; color: #fff; padding: 24px 0; position: relative; z-index: 50; }
+        .footer { background: #1f2937; color: #fff; padding: 24px 0; position: fixed; bottom: 0; left: 0; right: 0; z-index: 50; }
         .footer-inner { text-align: center; padding: 0 16px; }
         .footer-text { color: #9ca3af; font-size: 14px; }
 
@@ -635,7 +636,7 @@
             } else {
                 mainContent = renderHeader() + renderSearch() + renderResultsSection() + renderFaqCategories() + renderContact();
             }
-            app.innerHTML = '<div class="pb-16">' + mainContent + '</div>' + renderFooter() + renderModal();
+            app.innerHTML = '<div class="page-wrapper"><div class="page-content"><div class="pb-16">' + mainContent + '</div></div>' + renderFooter() + '</div>' + renderModal();
             var input = document.getElementById('searchInput');
             if (input) {
                 input.value = state.searchKeyword;
