@@ -117,6 +117,24 @@
         .contact-item-desc a:hover { text-decoration: underline; }
         .contact-phone { color: #2563eb; font-weight: 500; }
 
+        /* Modal */
+        .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 200; align-items: center; justify-content: center; padding: 16px; }
+        .modal-overlay.active { display: flex; }
+        .modal { background: #fff; border-radius: 12px; width: 100%; max-width: 480px; max-height: 80vh; overflow-y: auto; }
+        .modal-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid #e5e7eb; }
+        .modal-title { font-size: 16px; font-weight: 600; color: #111827; }
+        .modal-close { background: none; border: none; cursor: pointer; color: #6b7280; padding: 4px; border-radius: 4px; font-size: 20px; line-height: 1; }
+        .modal-close:hover { background: #f3f4f6; color: #111827; }
+        .modal-body { padding: 16px 20px; }
+        .modal-file-list { display: flex; flex-direction: column; gap: 12px; }
+        .modal-file-item { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; background: #f9fafb; border-radius: 8px; }
+        .modal-file-info { display: flex; align-items: center; gap: 12px; }
+        .modal-file-icon { color: #ef4444; flex-shrink: 0; }
+        .modal-file-icon svg { width: 28px; height: 28px; }
+        .modal-file-name { font-size: 14px; color: #111827; font-weight: 500; }
+        .modal-download-btn { padding: 6px 16px; background: #2563eb; color: #fff; border: none; border-radius: 6px; font-size: 13px; cursor: pointer; font-weight: 500; white-space: nowrap; }
+        .modal-download-btn:hover { background: #1d4ed8; }
+
         /* Footer */
         .footer { background: #1f2937; color: #fff; padding: 24px 0; position: fixed; bottom: 0; left: 0; right: 0; z-index: 50; }
         .footer-inner { text-align: center; padding: 0 16px; }
@@ -293,6 +311,24 @@
           { id: 8, productType: '笔记本', category: 'laptop', title: '笔记本WiFi连接不稳定怎么办？', question: '无线网络经常断连或信号弱', answer: '排查方法：1. 检查路由器是否正常工作；2. 尝试更新无线网卡驱动；3. 调整笔记本位置改善信号；4. 重置网络适配器；5. 检查是否有电磁干扰源。如问题持续，可能需要更换网卡。', priority: 'medium' },
           { id: 9, productType: '笔记本', category: 'laptop', title: '笔记本触摸板失灵如何解决？', question: '笔记本触摸板无法正常使用', answer: '解决步骤：1. 检查是否误触关闭快捷键（如Fn+F9）；2. 更新触摸板驱动程序；3. 在设备管理器中重新启用设备；4. 检查是否有液体进入；5. 如硬件故障，请联系售后维修。', priority: 'high' }
         ];
+
+        const productDocuments = {
+            '笔记本': [
+                { name: '笔记本产品参数说明书.pdf', url: '#' },
+                { name: '笔记本常见问题解答.pdf', url: '#' },
+                { name: '笔记本用户手册.pdf', url: '#' }
+            ],
+            '服务器': [
+                { name: '服务器产品参数说明书.pdf', url: '#' },
+                { name: '服务器常见问题解答.pdf', url: '#' },
+                { name: '服务器用户手册.pdf', url: '#' }
+            ],
+            '工智助手': [
+                { name: '工智助手产品参数说明书.pdf', url: '#' },
+                { name: '工智助手常见问题解答.pdf', url: '#' },
+                { name: '工智助手用户手册.pdf', url: '#' }
+            ]
+        };
 
         const categoryIcons = {
             '笔记本': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="4" y="6" width="16" height="10"/><path d="M4 18h16" stroke-linecap="round"/></svg>',
@@ -519,13 +555,13 @@
             ];
             var cards = '';
             categories.forEach(function(item) {
-                cards += '<a href="#' + item.route + '" class="faq-card-link">' +
+                cards += '<div class="faq-card-link" onclick="openDocumentModal(\'' + item.type + '\')" style="cursor:pointer">' +
                     '<div class="faq-card"><div class="faq-card-inner">' +
                     '<div class="faq-card-content">' +
                     '<div class="faq-card-icon">' + (categoryIcons[item.type] || '') + '</div>' +
                     '<span class="faq-card-label">' + item.type + '</span>' +
                     '</div></div></div>' +
-                    '<p class="faq-card-desc">' + item.desc + '</p></a>';
+                    '<p class="faq-card-desc">' + item.desc + '</p></div>';
             });
             return '<section class="faq-section"><div class="container">' +
                 '<h2 class="faq-title">常见问题</h2>' +
@@ -537,6 +573,53 @@
             return '<footer class="footer"><div class="footer-inner">' +
                 '<p class="footer-text">&copy; 2026 浪潮云洲 版权所有</p>' +
                 '</div></footer>';
+        }
+
+        function renderModal() {
+            return '<div class="modal-overlay" id="modalOverlay" onclick="closeDocumentModal(event)">' +
+                '<div class="modal" onclick="event.stopPropagation()">' +
+                '<div class="modal-header">' +
+                '<h3 class="modal-title" id="modalTitle"></h3>' +
+                '<button class="modal-close" onclick="closeDocumentModal()">&times;</button>' +
+                '</div>' +
+                '<div class="modal-body">' +
+                '<div class="modal-file-list" id="modalFileList"></div>' +
+                '</div>' +
+                '</div>' +
+                '</div>';
+        }
+
+        function openDocumentModal(type) {
+            var docs = productDocuments[type];
+            if (!docs) return;
+            document.getElementById('modalTitle').textContent = type + ' - 产品文档';
+            var listHtml = '';
+            docs.forEach(function(doc) {
+                listHtml += '<div class="modal-file-item">' +
+                    '<div class="modal-file-info">' +
+                    '<div class="modal-file-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" stroke-linecap="round" stroke-linejoin="round"/><polyline points="14 2 14 8 20 8"/></svg></div>' +
+                    '<span class="modal-file-name">' + doc.name + '</span>' +
+                    '</div>' +
+                    '<button class="modal-download-btn" onclick="downloadFile(\'' + doc.url + '\')">下载</button>' +
+                    '</div>';
+            });
+            document.getElementById('modalFileList').innerHTML = listHtml;
+            document.getElementById('modalOverlay').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeDocumentModal(e) {
+            if (e && e.target !== e.currentTarget) return;
+            document.getElementById('modalOverlay').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        function downloadFile(url) {
+            if (url && url !== '#') {
+                window.open(url, '_blank');
+            } else {
+                alert('该文件暂未上传，敬请期待！');
+            }
         }
 
         function render() {
@@ -551,7 +634,7 @@
             } else {
                 mainContent = renderHeader() + renderSearch() + renderResultsSection() + renderFaqCategories() + renderContact();
             }
-            app.innerHTML = '<div class="pb-16">' + mainContent + '</div>' + renderFooter();
+            app.innerHTML = '<div class="pb-16">' + mainContent + '</div>' + renderFooter() + renderModal();
             var input = document.getElementById('searchInput');
             if (input) {
                 input.value = state.searchKeyword;
