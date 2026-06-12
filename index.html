@@ -545,7 +545,7 @@
             var isDetailPage = !!state.selectedProduct;
             var mainContent;
             if (isFaqPage) {
-                mainContent = renderHeader() + renderFaqPage() + renderContact();
+                mainContent = renderHeader() + renderFaqPage();
             } else if (isDetailPage) {
                 mainContent = renderHeader() + renderResultsSection();
             } else {
