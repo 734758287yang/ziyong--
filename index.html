@@ -313,10 +313,10 @@
         ];
 
         const productDocuments = {
-            '笔记本': [
-                { name: '笔记本产品参数说明书.pdf', url: '#' },
-                { name: '笔记本常见问题解答.pdf', url: '#' },
-                { name: '笔记本用户手册.pdf', url: '#' }
+            '其他': [
+                { name: '其他产品参数说明书.pdf', url: '#' },
+                { name: '其他常见问题解答.pdf', url: '#' },
+                { name: '其他用户手册.pdf', url: '#' }
             ],
             '一体机': [
                 { name: '一体机产品参数说明书.pdf', url: '#' },
@@ -410,7 +410,7 @@
                 '<a href="#home">首页</a><span class="nav-sep">|</span>' +
                 '<a href="javascript:void(0)" onclick="openDocumentModal(\'工智助手\')">工智助手</a>' +
                 '<a href="javascript:void(0)" onclick="openDocumentModal(\'一体机\')">一体机</a>' +
-                '<a href="javascript:void(0)" onclick="openDocumentModal(\'笔记本\')">笔记本</a>' +
+                '<a href="javascript:void(0)" onclick="openDocumentModal(\'其他\')">其他</a>' +
                 '</nav></div></div></header>';
         }
 
@@ -552,7 +552,7 @@
             var categories = [
                 { type: '工智助手', route: 'faq/desktop', desc: '工智助手产品相关问题和解决方案' },
                 { type: '一体机', route: 'faq/desktop2', desc: '一体机产品相关问题和解决方案' },
-                { type: '笔记本', route: 'faq/laptop', desc: '笔记本电脑相关问题和解决方案' }
+                { type: '其他', route: 'faq/other', desc: '其他产品相关问题和解决方案' }
             ];
             var cards = '';
             categories.forEach(function(item) {
