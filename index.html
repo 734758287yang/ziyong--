@@ -164,7 +164,8 @@
               warrantyEndDate: '2026-11-29 00:00:00.0',
               machineModel: '算网工作站一体机',
               factoryDate: '2025-10-29 00:00:00.0',
-              onSiteServiceEndDate: ''
+              onSiteServiceEndDate: '',
+              config: 'AMD 4300U 8+256'
             },
             drivers: [
               { name: '一体机驱动 v1.0', desc: '算网工作站一体机基础驱动', url: '#' },
@@ -189,7 +190,8 @@
               warrantyEndDate: '2026-12-01 00:00:00.0',
               machineModel: '工智助手',
               factoryDate: '2025-11-01 00:00:00.0',
-              onSiteServiceEndDate: ''
+              onSiteServiceEndDate: '',
+              config: 'AMD 4300U 8+256'
             },
             drivers: [
               { name: '工智助手驱动 v1.0', desc: '台式机基础驱动', url: '#' },
@@ -214,7 +216,8 @@
               warrantyEndDate: '2027-01-15 00:00:00.0',
               machineModel: 'L450',
               factoryDate: '2025-12-15 00:00:00.0',
-              onSiteServiceEndDate: ''
+              onSiteServiceEndDate: '',
+              config: 'i7-1355U 16+512'
             },
             drivers: [
               { name: '笔记本BIOS v1.5', desc: '笔记本BIOS升级', url: '#' },
@@ -239,7 +242,8 @@
               warrantyEndDate: '2026-11-29 00:00:00.0',
               machineModel: '算网工作站一体机',
               factoryDate: '2025-10-29 00:00:00.0',
-              onSiteServiceEndDate: ''
+              onSiteServiceEndDate: '',
+              config: 'AMD 4300U 8+256'
             },
             drivers: [
               { name: '一体机驱动 v1.0', desc: '算网工作站一体机基础驱动', url: '#' },
@@ -264,7 +268,8 @@
               warrantyEndDate: '2026-12-01 00:00:00.0',
               machineModel: '工智助手',
               factoryDate: '2025-11-01 00:00:00.0',
-              onSiteServiceEndDate: ''
+              onSiteServiceEndDate: '',
+              config: 'AMD 4300U 8+256'
             },
             drivers: [
               { name: '工智助手驱动 v1.0', desc: '台式机基础驱动', url: '#' },
@@ -289,7 +294,8 @@
               warrantyEndDate: '2027-01-15 00:00:00.0',
               machineModel: 'L550',
               factoryDate: '2025-12-15 00:00:00.0',
-              onSiteServiceEndDate: ''
+              onSiteServiceEndDate: '',
+              config: 'i9-13900H 32+1T'
             },
             drivers: [
               { name: '笔记本BIOS v1.5', desc: '笔记本BIOS升级', url: '#' },
@@ -436,6 +442,7 @@
                 warrantyHtml += '<div class="warranty-item"><span class="warranty-label">主机机型：</span><span class="warranty-value">' + product.warranty.machineModel + '</span></div>';
                 warrantyHtml += '<div class="warranty-item"><span class="warranty-label">主机系列：</span><span class="warranty-value">' + product.warranty.machineSeries + '</span></div>';
                 warrantyHtml += '<div class="warranty-item"><span class="warranty-label">出厂日期：</span><span class="warranty-value">' + product.warranty.factoryDate + '</span></div>';
+                warrantyHtml += '<div class="warranty-item"><span class="warranty-label">配置/规格：</span><span class="warranty-value">' + (product.warranty.config || '暂无数据') + '</span></div>';
                 warrantyHtml += '<div class="warranty-item"><span class="warranty-label">保修截止日期：</span><span class="warranty-value">' + product.warranty.warrantyEndDate + '</span></div>';
                 warrantyHtml += '</div></div></div>';
             }
