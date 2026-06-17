@@ -80,14 +80,12 @@
         .faq-grid { display: grid; grid-template-columns: 1fr; gap: 24px; }
         @media (min-width: 768px) { .faq-grid { grid-template-columns: repeat(3, 1fr); } }
         .faq-card-link { text-decoration: none; display: block; }
-        .faq-card { position: relative; overflow: hidden; border-radius: 8px; aspect-ratio: 16 / 9; background: linear-gradient(135deg, #1f2937 0%, #111827 100%); transition: background 0.2s; }
-        .faq-card:hover { background: linear-gradient(135deg, #374151 0%, #1f2937 100%); }
-        .faq-card-inner { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; }
-        .faq-card-content { text-align: center; }
-        .faq-card-icon { color: rgba(255,255,255,0.8); margin-bottom: 8px; display: block; }
-        .faq-card-icon svg { width: 48px; height: 48px; margin: 0 auto; }
-        .faq-card-label { color: #fff; font-size: 18px; font-weight: 600; }
-        .faq-card-desc { margin-top: 8px; font-size: 14px; color: #6b7280; text-align: center; }
+        .faq-card { position: relative; overflow: hidden; border-radius: 12px; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.06); transition: transform 0.2s, box-shadow 0.2s; }
+        .faq-card:hover { transform: translateY(-4px); box-shadow: 0 10px 25px rgba(0,0,0,0.1), 0 4px 10px rgba(0,0,0,0.06); }
+        .faq-card-image { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; display: block; background: #f3f4f6; }
+        .faq-card-body { padding: 16px; text-align: center; }
+        .faq-card-label { font-size: 16px; font-weight: 600; color: #111827; }
+        .faq-card-desc { margin-top: 6px; font-size: 13px; color: #6b7280; }
 
         /* FAQ page */
         .faq-page-section { background: #fff; box-shadow: 0 1px 2px rgba(0,0,0,0.05); border-bottom: 1px solid #e5e7eb; }
@@ -337,6 +335,12 @@
             '服务器': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01" stroke-linecap="round" stroke-linejoin="round"/></svg>'
         };
 
+        const categoryImages = {
+            '工智助手': 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=modern%20desktop%20computer%20product%20shot%20on%20clean%20white%20background&image_size=landscape_16_9',
+            '一体机': 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=all-in-one%20workstation%20computer%20product%20photo%20on%20clean%20white%20background&image_size=landscape_16_9',
+            '其他': 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=various%20computer%20devices%20product%20photo%20on%20clean%20white%20background&image_size=landscape_16_9'
+        };
+
         const categoryMap = { 'server': '服务器', 'desktop': '工智助手', 'desktop2': '一体机', 'laptop': '笔记本' };
 
         let state = {
@@ -550,11 +554,11 @@
             var cards = '';
             categories.forEach(function(item) {
                 cards += '<div class="faq-card-link" onclick="openDocumentModal(\'' + item.type + '\')" style="cursor:pointer">' +
-                    '<div class="faq-card"><div class="faq-card-inner">' +
-                    '<div class="faq-card-content">' +
-                    '<div class="faq-card-icon">' + (categoryIcons[item.type] || '') + '</div>' +
-                    '<span class="faq-card-label">' + item.type + '</span>' +
-                    '</div></div></div>' +
+                    '<div class="faq-card">' +
+                    '<img class="faq-card-image" src="' + (categoryImages[item.type] || '') + '" alt="' + item.type + '" />' +
+                    '<div class="faq-card-body">' +
+                    '<div class="faq-card-label">' + item.type + '</div>' +
+                    '</div></div>' +
                     '<p class="faq-card-desc">' + item.desc + '</p></div>';
             });
             return '<section class="faq-section"><div class="container">' +
