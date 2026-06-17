@@ -82,7 +82,7 @@
         .faq-card-link { text-decoration: none; display: block; }
         .faq-card { position: relative; overflow: hidden; border-radius: 12px; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.06); transition: transform 0.2s, box-shadow 0.2s; }
         .faq-card:hover { transform: translateY(-4px); box-shadow: 0 10px 25px rgba(0,0,0,0.1), 0 4px 10px rgba(0,0,0,0.06); }
-        .faq-card-image { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; display: block; background: #f3f4f6; }
+        .faq-card-image { width: 100%; aspect-ratio: 16 / 10; object-fit: contain; display: block; background: #f8f9fa; padding: 12px; }
         .faq-card-body { padding: 16px; text-align: center; }
         .faq-card-label { font-size: 16px; font-weight: 600; color: #111827; }
         .faq-card-desc { margin-top: 6px; font-size: 13px; color: #6b7280; }
@@ -336,9 +336,9 @@
         };
 
         const categoryImages = {
-            '工智助手': 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=modern%20desktop%20computer%20product%20shot%20on%20clean%20white%20background&image_size=landscape_16_9',
-            '一体机': 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=all-in-one%20workstation%20computer%20product%20photo%20on%20clean%20white%20background&image_size=landscape_16_9',
-            '其他': 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=various%20computer%20devices%20product%20photo%20on%20clean%20white%20background&image_size=landscape_16_9'
+            '工智助手': './images/443e3cbe213b59e3711fa2b62f9252ff.jpg',
+            '一体机': './images/yitiji.jpg',
+            '其他': './images/other.jpg'
         };
 
         const categoryMap = { 'server': '服务器', 'desktop': '工智助手', 'desktop2': '一体机', 'laptop': '笔记本' };
