@@ -13,8 +13,8 @@
 
         /* Header */
         .header { background: #fff; box-shadow: 0 1px 2px rgba(0,0,0,0.05); border-bottom: 1px solid #e5e7eb; }
-        .header-inner { position: relative; display: flex; align-items: center; max-width: 1152px; margin: 0 auto; padding: 16px; }
-        .logo { font-size: 24px; font-weight: 700; color: #2563eb; cursor: pointer; text-decoration: none; }
+        .header-inner { position: relative; display: flex; align-items: center; justify-content: space-between; }
+        .logo { font-size: 24px; font-weight: 700; color: #2563eb; cursor: pointer; text-decoration: none; padding: 16px 0; }
         .nav { display: flex; gap: 16px; font-size: 14px; margin-left: auto; }
         .nav a { color: #6b7280; text-decoration: none; }
         .nav a:hover { color: #2563eb; }
@@ -52,7 +52,7 @@
         .detail-header { font-size: 18px; font-weight: 700; color: #111827; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid #e5e7eb; }
         .detail-section { margin-bottom: 24px; }
         .detail-section-title { font-size: 16px; font-weight: 600; color: #111827; margin-bottom: 16px; }
-        .warranty-box { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; padding: 20px 0 20px 16px; }
+        .warranty-box { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; padding: 20px; }
         .warranty-grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
         @media (min-width: 768px) { .warranty-grid { grid-template-columns: 1fr 1fr; } }
         .warranty-item { display: flex; flex-direction: column; gap: 4px; }
@@ -414,9 +414,9 @@
         }
 
         function renderHeader() {
-            return '<header class="header"><div class="header-inner">' +
+            return '<header class="header"><div class="container"><div class="header-inner">' +
                 '<a class="logo" onclick="navigate(\'home\')">浪潮云洲</a>' +
-                '</div></header>';
+                '</div></div></header>';
         }
 
         function renderSearch() {
