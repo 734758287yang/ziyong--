@@ -107,7 +107,8 @@
         .contact-title { font-size: 18px; font-weight: 700; color: #111827; margin-bottom: 24px; text-align: center; }
         .contact-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 24px; max-width: 960px; margin: 0 auto; }
         .contact-item { text-align: center; }
-        .contact-icon { width: 64px; height: 64px; border-radius: 50%; background: #f3f4f6; display: flex; align-items: center; justify-content: center; margin: 0 auto 12px; }
+        .contact-icon { width: 64px; height: 64px; border-radius: 50%; background: #fff; display: flex; align-items: center; justify-content: center; margin: 0 auto 12px; overflow: hidden; }
+        .contact-icon img { width: 100%; height: 100%; object-fit: contain; }
         .contact-icon svg { width: 32px; height: 32px; color: #9ca3af; }
         .contact-item-title { font-size: 14px; font-weight: 600; color: #111827; margin-bottom: 8px; }
         .contact-item-desc { font-size: 12px; color: #6b7280; line-height: 1.8; }
@@ -118,8 +119,8 @@
         /* Modal */
         .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 200; align-items: center; justify-content: center; padding: 16px; }
         .modal-overlay.active { display: flex; }
-        .modal { background: #fff; border-radius: 12px; width: 100%; max-width: 480px; max-height: 80vh; overflow-y: auto; }
-        .modal-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid #e5e7eb; }
+        .modal { background: #fff; border-radius: 12px; width: 100%; max-width: 560px; max-height: 85vh; overflow-y: auto; }
+        .modal-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid #e5e7eb; position: sticky; top: 0; background: #fff; z-index: 1; border-radius: 12px 12px 0 0; }
         .modal-title { font-size: 16px; font-weight: 600; color: #111827; }
         .modal-close { background: none; border: none; cursor: pointer; color: #6b7280; padding: 4px; border-radius: 4px; font-size: 20px; line-height: 1; }
         .modal-close:hover { background: #f3f4f6; color: #111827; }
@@ -132,6 +133,12 @@
         .modal-file-name { font-size: 14px; color: #111827; font-weight: 500; }
         .modal-download-btn { padding: 6px 16px; background: #2563eb; color: #fff; border: none; border-radius: 6px; font-size: 13px; cursor: pointer; font-weight: 500; white-space: nowrap; }
         .modal-download-btn:hover { background: #1d4ed8; }
+        .modal-play-btn { padding: 6px 16px; background: #10b981; color: #fff; border: none; border-radius: 6px; font-size: 13px; cursor: pointer; font-weight: 500; white-space: nowrap; }
+        .modal-play-btn:hover { background: #059669; }
+        .modal-file-icon-video { color: #10b981; flex-shrink: 0; }
+        .modal-file-icon-video svg { width: 28px; height: 28px; }
+        .modal-section-label { font-size: 12px; font-weight: 600; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.5px; padding: 8px 0 4px; }
+        .modal-video-player { width: 100%; border-radius: 8px; margin-top: 8px; background: #000; }
 
         /* Footer */
         .footer { background: #1f2937; color: #fff; padding: 24px 0; position: fixed; bottom: 0; left: 0; right: 0; z-index: 50; }
@@ -318,19 +325,40 @@
 
         const productDocuments = {
             '其他': [
-                { name: '其他产品参数说明书.pdf', url: '#' },
-                { name: '其他常见问题解答.pdf', url: '#' },
-                { name: '其他用户手册.pdf', url: '#' }
+                { name: '其他产品参数说明书.pdf', url: '#', type: 'file' },
+                { name: '其他常见问题解答.pdf', url: '#', type: 'file' },
+                { name: '其他用户手册.pdf', url: '#', type: 'file' },
+                { name: '其他安装指南.pdf', url: '#', type: 'file' },
+                { name: '其他快速入门.pdf', url: '#', type: 'file' },
+                { name: '其他安全须知.pdf', url: '#', type: 'file' },
+                { name: '其他维护手册.pdf', url: '#', type: 'file' },
+                { name: '其他产品介绍视频.mp4', url: '#', type: 'video' },
+                { name: '其他安装教程视频.mp4', url: '#', type: 'video' },
+                { name: '其他常见问题视频.mp4', url: '#', type: 'video' }
             ],
             '一体机': [
-                { name: '一体机产品参数说明书.pdf', url: '#' },
-                { name: '一体机常见问题解答.pdf', url: '#' },
-                { name: '一体机用户手册.pdf', url: '#' }
+                { name: '一体机产品参数说明书.pdf', url: '#', type: 'file' },
+                { name: '一体机常见问题解答.pdf', url: '#', type: 'file' },
+                { name: '一体机用户手册.pdf', url: '#', type: 'file' },
+                { name: '一体机安装指南.pdf', url: '#', type: 'file' },
+                { name: '一体机快速入门.pdf', url: '#', type: 'file' },
+                { name: '一体机安全须知.pdf', url: '#', type: 'file' },
+                { name: '一体机维护手册.pdf', url: '#', type: 'file' },
+                { name: '一体机产品介绍视频.mp4', url: '#', type: 'video' },
+                { name: '一体机安装教程视频.mp4', url: '#', type: 'video' },
+                { name: '一体机常见问题视频.mp4', url: '#', type: 'video' }
             ],
             '工智助手': [
-                { name: '工智助手产品参数说明书.pdf', url: '#' },
-                { name: '工智助手常见问题解答.pdf', url: '#' },
-                { name: '工智助手用户手册.pdf', url: '#' }
+                { name: '工智助手产品参数说明书.pdf', url: '#', type: 'file' },
+                { name: '工智助手常见问题解答.pdf', url: '#', type: 'file' },
+                { name: '工智助手用户手册.pdf', url: '#', type: 'file' },
+                { name: '工智助手安装指南.pdf', url: '#', type: 'file' },
+                { name: '工智助手快速入门.pdf', url: '#', type: 'file' },
+                { name: '工智助手安全须知.pdf', url: '#', type: 'file' },
+                { name: '工智助手维护手册.pdf', url: '#', type: 'file' },
+                { name: '工智助手产品介绍视频.mp4', url: '#', type: 'video' },
+                { name: '工智助手安装教程视频.mp4', url: '#', type: 'video' },
+                { name: '工智助手常见问题视频.mp4', url: '#', type: 'video' }
             ]
         };
 
@@ -530,22 +558,28 @@
                 '</div></div></section>';
         }
 
+        const qrCodeImages = {
+            '浪潮云洲': './qrcodes/langchaoyunzhoush.jpg',
+            '工智助手': './qrcodes/gongzhish.jpg',
+            '一体机': './qrcodes/yitijish.jpg'
+        };
+
         function renderContact() {
             return '<section class="contact-section"><div class="container"><div class="contact-inner">' +
                 '<h2 class="contact-title">售后服务联系</h2>' +
                 '<div class="contact-grid">' +
                 '<div class="contact-item">' +
-                '<div class="contact-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01" stroke-linecap="round" stroke-linejoin="round"/></svg></div>' +
+                '<div class="contact-icon"><img src="' + qrCodeImages['浪潮云洲'] + '" alt="浪潮云洲二维码" onerror="this.style.display=\'none\'"/></div>' +
                 '<div class="contact-item-title">浪潮云洲售后服务电话</div>' +
                 '<div class="contact-item-desc"><span class="contact-phone">4006245688 转 3</span></div>' +
                 '</div>' +
                 '<div class="contact-item">' +
-                '<div class="contact-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="4" y="6" width="16" height="10" rx="2"/><circle cx="16" cy="11" r="1.5"/><path d="M7 10h2" stroke-linecap="round"/><path d="M7 12h2" stroke-linecap="round"/></svg></div>' +
+                '<div class="contact-icon"><img src="' + qrCodeImages['工智助手'] + '" alt="工智助手二维码" onerror="this.style.display=\'none\'"/></div>' +
                 '<div class="contact-item-title">工智助手售后服务电话</div>' +
                 '<div class="contact-item-desc"><span class="contact-phone">15165058228</span></div>' +
                 '</div>' +
                 '<div class="contact-item">' +
-                '<div class="contact-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4" stroke-linecap="round"/></svg></div>' +
+                '<div class="contact-icon"><img src="' + qrCodeImages['一体机'] + '" alt="一体机二维码" onerror="this.style.display=\'none\'"/></div>' +
                 '<div class="contact-item-title">一体机售后服务电话</div>' +
                 '<div class="contact-item-desc"><span class="contact-phone">18865925931</span></div>' +
                 '</div>' +
@@ -598,19 +632,63 @@
             var docs = productDocuments[type];
             if (!docs) return;
             document.getElementById('modalTitle').textContent = type + ' - 产品文档';
+            var files = docs.filter(function(d) { return d.type === 'file'; });
+            var videos = docs.filter(function(d) { return d.type === 'video'; });
             var listHtml = '';
-            docs.forEach(function(doc) {
-                listHtml += '<div class="modal-file-item">' +
-                    '<div class="modal-file-info">' +
-                    '<div class="modal-file-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" stroke-linecap="round" stroke-linejoin="round"/><polyline points="14 2 14 8 20 8"/></svg></div>' +
-                    '<span class="modal-file-name">' + doc.name + '</span>' +
-                    '</div>' +
-                    '<button class="modal-download-btn" onclick="downloadFile(\'' + doc.url + '\')">下载</button>' +
-                    '</div>';
-            });
+            if (files.length > 0) {
+                listHtml += '<div class="modal-section-label">文档资料</div>';
+                files.forEach(function(doc) {
+                    listHtml += '<div class="modal-file-item">' +
+                        '<div class="modal-file-info">' +
+                        '<div class="modal-file-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" stroke-linecap="round" stroke-linejoin="round"/><polyline points="14 2 14 8 20 8"/></svg></div>' +
+                        '<span class="modal-file-name">' + doc.name + '</span>' +
+                        '</div>' +
+                        '<button class="modal-download-btn" onclick="downloadFile(\'' + doc.url + '\')">下载</button>' +
+                        '</div>';
+                });
+            }
+            if (videos.length > 0) {
+                listHtml += '<div class="modal-section-label" style="margin-top:12px">视频教程</div>';
+                videos.forEach(function(doc, idx) {
+                    var videoId = 'modalVideo_' + idx;
+                    listHtml += '<div class="modal-file-item" style="flex-direction:column;align-items:stretch">' +
+                        '<div style="display:flex;align-items:center;justify-content:space-between">' +
+                        '<div class="modal-file-info">' +
+                        '<div class="modal-file-icon-video"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="5 3 19 12 5 21 5 3"/></svg></div>' +
+                        '<span class="modal-file-name">' + doc.name + '</span>' +
+                        '</div>' +
+                        '<button class="modal-play-btn" id="' + videoId + 'Btn" onclick="toggleVideo(\'' + videoId + '\', \'' + doc.url + '\')">播放</button>' +
+                        '</div>' +
+                        '<video class="modal-video-player" id="' + videoId + '" style="display:none" controls><source src="' + doc.url + '" type="video/mp4">您的浏览器不支持视频播放</video>' +
+                        '</div>';
+                });
+            }
             document.getElementById('modalFileList').innerHTML = listHtml;
             document.getElementById('modalOverlay').classList.add('active');
             document.body.style.overflow = 'hidden';
+        }
+
+        function toggleVideo(videoId, url) {
+            var video = document.getElementById(videoId);
+            var btn = document.getElementById(videoId + 'Btn');
+            if (!video || !btn) return;
+            if (url && url !== '#') {
+                if (video.style.display === 'none') {
+                    video.style.display = 'block';
+                    btn.textContent = '暂停';
+                    video.play();
+                } else {
+                    if (video.paused) {
+                        video.play();
+                        btn.textContent = '暂停';
+                    } else {
+                        video.pause();
+                        btn.textContent = '播放';
+                    }
+                }
+            } else {
+                alert('该视频暂未上传，敬请期待！');
+            }
         }
 
         function closeDocumentModal(e) {
