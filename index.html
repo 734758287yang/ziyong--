@@ -467,19 +467,17 @@
             }
             var rows = '';
             state.searchResults.forEach(function(p) {
-                var driverName = p.drivers && p.drivers.length > 0 ? p.drivers[0].name : '';
                 rows += '<tr>' +
                     '<td>' + p.serialNumber + '</td>' +
                     '<td>' + (p.warranty ? p.warranty.machineModel : '') + '</td>' +
                     '<td>' + (p.warranty ? p.warranty.machineSeries : '') + '</td>' +
                     '<td>' + (p.warranty ? p.warranty.factoryDate : '') + '</td>' +
                     '<td>' + (p.warranty ? p.warranty.warrantyEndDate : '') + '</td>' +
-                    '<td>' + driverName + '</td>' +
                     '<td><button class="link-btn" onclick="handleProductClick(' + p.id + ')">详情</button></td>' +
                     '</tr>';
             });
             return '<div class="results-table"><table><thead><tr>' +
-                '<th>主机序列号</th><th>主机机型</th><th>主机系列</th><th>出厂日期</th><th>保修日期</th><th>驱动/软件名称</th><th>操作</th>' +
+                '<th>主机序列号</th><th>主机机型</th><th>主机系列</th><th>出厂日期</th><th>保修日期</th><th>操作</th>' +
                 '</tr></thead><tbody>' + rows + '</tbody></table></div>';
         }
 
